@@ -27,3 +27,14 @@ The rarer your answer, the more points you get (Common 10, Uncommon 30, Rare 60,
 ```
 
 Made by **Virat Reddy Kaukuntla** ([@learningnihongo934-byte](https://github.com/learningnihongo934-byte))
+
+## Recording a run
+
+`tools/record-run.mjs` plays a perfect daily run (every answer is the hidden Legendary gem) in headless Chrome. It captures each frame and the game's own sound, then writes a 1080p60 MP4 with ffmpeg. Run it against a local copy so the answers don't get counted in the live stats:
+
+```bash
+./build.sh serve                                   # in one terminal
+cd tools && npm i playwright-core && node record-run.mjs http://localhost:8830/ ../videos/run.mp4
+```
+
+Videos go in `videos/`, which isn't committed. Normalize the audio afterwards with `ffmpeg -i in.mp4 -c:v copy -af loudnorm=I=-16:TP=-1.5 out.mp4`.
