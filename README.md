@@ -1,8 +1,8 @@
 # Otakount
 
-Anime list trivia. Pick a question like "Name a Naruto character" and type as many answers as you can in 90 seconds. Each right answer adds 3 seconds. Spelling is forgiving, and a unique first or last name counts on its own ("Kakashi").
+Daily anime trivia in pixel art, inspired by list-trivia games like Krillion. Each day has 7 prompts. You give one answer per prompt within 25 seconds, and rarer answers score more (Common 10 up to Legendary 100). Points turn into distance walked across a pixel anime world, from Starter Village to Sky Castle at 7,000 m. Endless mode gives a random set any time.
 
-20 questions in 4 groups: Characters, Shows, Powers, Industry.
+Rarity comes from list order: lists are written most famous first, and the last answer is the Legendary one.
 
 ## Adding questions
 

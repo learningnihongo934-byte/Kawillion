@@ -4,210 +4,251 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Otakount</title>
-<meta name="description" content="Anime list trivia: name as many answers as you can before the clock runs out.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
+<meta name="description" content="Daily anime trivia. Seven prompts, one answer each. Rarer answers carry you further across a pixel anime world.">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff7f3;--card:#fff;--ink:#2a1e2e;--mute:#8a7a8e;--line:#f0dfe6;--accent:#ff4f8b;--accent2:#7c5cff;--good:#1fb57a;--bad:#e5484d}
-@media (prefers-color-scheme:dark){:root{--bg:#17121c;--card:#221a2a;--ink:#f6eef8;--mute:#a597ab;--line:#33283c;--accent:#ff6b9e;--accent2:#9a82ff;--good:#3ad08f;--bad:#ff6b6f}}
+:root{--bg:#1a1630;--panel:#2a2448;--edge:#0d0b1a;--ink:#f4efff;--mute:#a9a0c8;--pink:#ff5c9d;--gold:#ffd23f;--good:#4ce08a;--bad:#ff5a5a;
+  --t0:#b8b8c8;--t1:#4ce08a;--t2:#4cb6ff;--t3:#c070ff;--t4:#ffd23f}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"M PLUS Rounded 1c",system-ui,sans-serif;min-height:100vh}
-main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
-h1{font-size:40px;margin:8px 0 2px;letter-spacing:-1px}
-h1 span{color:var(--accent)}
-.sub{color:var(--mute);margin:0 0 20px}
-button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 16px;background:var(--line);color:var(--ink)}
-button.primary{background:var(--accent);color:#fff;font-weight:800}
-button:hover{filter:brightness(1.05)}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-input[type=search],#guess{font:inherit;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);flex:1;min-width:0}
-#guess{font-size:20px;width:100%}
-#guess:focus,input[type=search]:focus{outline:none;border-color:var(--accent2)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.chip{padding:6px 12px;border-radius:999px;font-size:14px}
-.chip.on{background:var(--accent2);color:#fff}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.q{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px}
-.q b{font-size:16px}
-.q small{color:var(--mute)}
-.q:hover{border-color:var(--accent)}
-.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0}
-.big{font-size:34px;font-weight:800}
-.timer.low{color:var(--bad)}
-.prompt{font-size:26px;font-weight:800;margin:6px 0}
-.meter{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0}
-.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s}
-.flash{height:24px;font-weight:800;margin:6px 0}
-.flash.good{color:var(--good)}.flash.bad{color:var(--bad)}
-.found{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.found span{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:4px 10px;font-size:14px}
-.found span.new{border-color:var(--good);animation:pop .4s}
-.found span.miss{color:var(--mute);border-style:dashed}
-@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"VT323",monospace;font-size:22px;min-height:100vh;image-rendering:pixelated}
+main{max-width:760px;margin:0 auto;padding:16px 16px 48px}
+h1,.px{font-family:"Press Start 2P",monospace}
+h1{font-size:26px;margin:10px 0 4px;color:var(--pink);text-shadow:3px 3px 0 var(--edge)}
+.sub{color:var(--mute);margin:0 0 14px;line-height:1.1}
+.box{background:var(--panel);border:4px solid var(--edge);box-shadow:inset -4px -4px 0 #00000055,inset 4px 4px 0 #ffffff14;padding:14px;margin:12px 0}
+button{font-family:"Press Start 2P",monospace;font-size:12px;cursor:pointer;border:4px solid var(--edge);background:#4a4170;color:var(--ink);padding:12px 14px;box-shadow:inset -3px -3px 0 #00000066,inset 3px 3px 0 #ffffff22}
+button.go{background:var(--pink)}
+button:active{transform:translate(2px,2px)}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+canvas#world{width:100%;aspect-ratio:320/96;display:block;border:4px solid var(--edge);image-rendering:pixelated;background:#000}
+.hud{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:24px}
+.prompt{font-family:"Press Start 2P",monospace;font-size:15px;line-height:1.6;margin:6px 0 12px}
+.timebar{height:14px;border:3px solid var(--edge);background:#111;margin-bottom:12px}
+.timebar i{display:block;height:100%;background:var(--gold);width:100%}
+#guess{width:100%;font:inherit;font-size:28px;padding:8px 12px;background:#111;color:var(--ink);border:4px solid var(--edge);outline:none}
+#guess:focus{border-color:var(--pink)}
+.tier{font-family:"Press Start 2P",monospace;font-size:13px;padding:6px 8px;border:3px solid var(--edge);display:inline-block;color:#111}
+.reveal{min-height:90px}
+.reveal .big{font-family:"Press Start 2P",monospace;font-size:18px;margin:8px 0}
+.list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.list span{border:2px solid var(--edge);padding:1px 8px;background:#00000033}
+.dots{font-family:"Press Start 2P",monospace;font-size:14px;letter-spacing:4px}
 .hidden{display:none!important}
-.result{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin:12px 0}
-.result .big{color:var(--accent)}
-footer{color:var(--mute);font-size:13px;text-align:center;margin-top:40px}
+footer{color:var(--mute);text-align:center;margin-top:30px}
 </style>
 </head>
 <body>
 <main>
-  <section id="home">
-    <h1>Otaku<span>unt</span></h1>
-    <p class="sub">Pick a question, then name as many answers as you can. Every right answer adds 3 seconds.</p>
-    <div class="bar">
-      <button class="primary" id="random">Random question</button>
-      <input type="search" id="search" placeholder="Search questions">
-    </div>
-    <div class="chips" id="cats"></div>
-    <div class="grid" id="list"></div>
+  <h1>OTAKOUNT</h1>
+  <p class="sub">Seven anime prompts a day. Give one answer to each. Common answers move you a little, rare ones send you far across the world.</p>
+  <canvas id="world" width="320" height="96"></canvas>
+  <div class="hud"><span id="where">Starter Village</span><span id="dist">0 m</span></div>
+
+  <section id="home" class="box">
+    <div class="px" style="font-size:12px;margin-bottom:10px" id="dayLabel"></div>
+    <p id="homeText" class="sub"></p>
+    <div class="row"><button class="go" id="daily">Start journey</button><button id="endless">Endless mode</button></div>
+    <p class="sub" style="margin-top:12px">Tiers: <span style="color:var(--t0)">Common 10</span> · <span style="color:var(--t1)">Uncommon 30</span> · <span style="color:var(--t2)">Rare 60</span> · <span style="color:var(--t3)">Epic 85</span> · <span style="color:var(--t4)">Legendary 100</span></p>
   </section>
 
-  <section id="play" class="hidden">
-    <div class="hud">
-      <button id="quit">Back</button>
-      <div class="big timer" id="timer">90</div>
-      <button id="giveup">Give up</button>
-    </div>
+  <section id="play" class="box hidden">
+    <div class="row" style="justify-content:space-between"><span class="dots" id="dots"></span><span class="px" style="font-size:14px" id="clock">25</span></div>
     <div class="prompt" id="prompt"></div>
-    <div class="meter"><i id="meter"></i></div>
-    <div class="sub" id="count"></div>
-    <input id="guess" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type an answer and press Enter">
-    <div class="flash" id="flash"></div>
-    <div id="result" class="result hidden"></div>
-    <div class="found" id="found"></div>
+    <div class="timebar"><i id="bar"></i></div>
+    <input id="guess" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="One answer, then Enter">
+    <div class="reveal" id="reveal"></div>
+    <button class="go hidden" id="next">Next</button>
   </section>
+
+  <section id="done" class="box hidden"></section>
   <footer>Made by Virat Reddy Kaukuntla</footer>
 </main>
 <script src="questions.js"></script>
 <script>
 const Q = window.QUESTIONS, $ = id => document.getElementById(id);
-const START = 90, BONUS = 3;
-let cat = "All", game = null;
-
+const ROUNDS = 7, SECONDS = 25, MAX = ROUNDS * 100;
+const TIERS = [["Common", 10, "--t0"], ["Uncommon", 30, "--t1"], ["Rare", 60, "--t2"], ["Epic", 85, "--t3"], ["Legendary", 100, "--t4"]];
+const REGIONS = ["Starter Village", "Ninja Forest", "Pirate Sea", "Titan Wall", "Demon Mountain", "Mecha City", "Sky Castle"];
 const store = {
   get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} }
 };
-let best = store.get("otakount.best", {});
 
-// lowercase, drop accents, punctuation, and "the"
+/* ---------- matching ---------- */
 function norm(s) {
-  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .replace(/&/g, "and").replace(/[^a-z0-9 ]+/g, " ").replace(/\bthe\b/g, " ")
-    .replace(/\s+/g, " ").trim();
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/&/g, "and")
+    .replace(/[^a-z0-9 ]+/g, " ").replace(/\bthe\b/g, " ").replace(/\s+/g, " ").trim();
 }
 const squash = s => norm(s).replace(/ /g, "").replace(/ou/g, "o").replace(/uu/g, "u");
-
 function lev(a, b, max) {
   if (Math.abs(a.length - b.length) > max) return max + 1;
   let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
   for (let i = 1; i <= a.length; i++) {
-    const cur = [i]; let lo = i;
-    for (let j = 1; j <= b.length; j++) {
-      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
-      lo = Math.min(lo, cur[j]);
-    }
-    if (lo > max) return max + 1;
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
     prev = cur;
   }
   return prev[b.length];
 }
-
-// Each answer gets a set of accepted keys: every spelling, plus any single word
-// of the name that no other answer in this question shares (so "Kakashi" works).
+// every spelling, plus any single word of a multi-word name that no other answer shares ("Kakashi")
 function buildKeys(q) {
-  const words = new Map();
+  const owners = new Map();
   q.a.forEach((alts, i) => alts.forEach(s => norm(s).split(" ").forEach(w => {
-    if (w.length < 3 || /^\d+$/.test(w)) return;
-    if (!words.has(w)) words.set(w, new Set());
-    words.get(w).add(i);
+    if (!owners.has(w)) owners.set(w, new Set());
+    owners.get(w).add(i);
   })));
   return q.a.map(alts => {
     const keys = new Set(alts.map(squash));
-    alts.forEach(s => norm(s).split(" ").forEach(w => {
-      if (words.get(w)?.size === 1 && norm(s).split(" ").length > 1 && w.length >= 4) keys.add(squash(w));
-    }));
+    alts.forEach(s => { const ws = norm(s).split(" "); if (ws.length > 1) ws.forEach(w => { if (w.length >= 4 && owners.get(w).size === 1) keys.add(squash(w)); }); });
     return [...keys];
   });
 }
-
-function match(guess) {
-  const g = squash(guess);
-  if (g.length < 2) return -1;
-  let bestI = -1, bestD = 9;
-  game.keys.forEach((keys, i) => keys.forEach(k => {
+function match(q, guess) {
+  const g = squash(guess); if (g.length < 2) return -1;
+  const keys = q._keys ||= buildKeys(q);
+  let best = -1, bestD = 9;
+  keys.forEach((ks, i) => ks.forEach(k => {
     const max = k.length >= 10 ? 2 : k.length >= 5 ? 1 : 0;
     const d = k === g ? 0 : lev(g, k, max);
-    if (d <= max && d < bestD) { bestD = d; bestI = i; }
+    if (d <= max && d < bestD) { bestD = d; best = i; }
   }));
-  return bestI;
+  return best;
+}
+// Lists are written roughly most-famous first, so position sets rarity; the last answer is the Legendary gem.
+function tierOf(q, i) {
+  const n = q.a.length;
+  if (i === n - 1) return 4;
+  const f = i / n;
+  return f < 0.3 ? 0 : f < 0.55 ? 1 : f < 0.8 ? 2 : 3;
 }
 
-function renderHome() {
-  const cats = ["All", ...new Set(Q.map(q => q.c))];
-  $("cats").innerHTML = cats.map(c => `<button class="chip ${c === cat ? "on" : ""}" data-c="${c}">${c}</button>`).join("");
-  const term = norm($("search").value);
-  $("list").innerHTML = Q.filter(q => (cat === "All" || q.c === cat) && (!term || norm(q.q).includes(term)))
-    .map(q => `<button class="q" data-id="${q.id}"><b>${q.q}</b><small>${q.c} · ${q.a.length} answers${best[q.id] ? ` · best ${best[q.id]}` : ""}</small></button>`).join("");
-}
-$("cats").onclick = e => { if (e.target.dataset.c) { cat = e.target.dataset.c; renderHome(); } };
-$("search").oninput = renderHome;
-$("list").onclick = e => { const b = e.target.closest(".q"); if (b) start(Q[b.dataset.id]); };
-$("random").onclick = () => { const pool = Q.filter(q => cat === "All" || q.c === cat); start(pool[Math.floor(Math.random() * pool.length)]); };
-
-function start(q) {
-  game = { q, keys: buildKeys(q), got: new Set(), time: START, over: false };
-  $("home").classList.add("hidden"); $("play").classList.remove("hidden");
-  $("prompt").textContent = q.q; $("found").innerHTML = ""; $("flash").textContent = "";
-  $("result").classList.add("hidden"); $("guess").disabled = false; $("guess").value = "";
-  $("giveup").classList.remove("hidden");
-  update(); $("guess").focus();
-  clearInterval(game.tick);
-  game.tick = setInterval(() => { game.time--; update(); if (game.time <= 0) end(); }, 1000);
+/* ---------- daily set ---------- */
+const today = new Date(), dayKey = today.toISOString().slice(0, 10);
+const dayNum = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(2026, 10, 1)) / 864e5) + 1;
+function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 2 ** 32; }; }
+function pick(rand) {
+  const ids = Q.map(q => q.id);
+  for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; }
+  return ids.slice(0, ROUNDS).map(i => Q[i]);
 }
 
-function update() {
-  $("timer").textContent = Math.max(0, game.time);
-  $("timer").classList.toggle("low", game.time <= 10);
-  $("count").textContent = `${game.got.size} of ${game.q.a.length} found`;
-  $("meter").style.width = (100 * game.got.size / game.q.a.length) + "%";
+/* ---------- pixel world ---------- */
+const cv = $("world"), cx = cv.getContext("2d"), RW = 200, W = REGIONS.length * RW;
+let heroX = 0, targetX = 0, walk = 0;
+function px(x, y, w, h, c) { cx.fillStyle = c; cx.fillRect(Math.round(x), Math.round(y), w, h); }
+function drawRegion(r, ox) {
+  const sky = ["#7ec8ff", "#6ab0e8", "#9bdcff", "#c9a87a", "#5a3a6a", "#2a2a5a", "#ffc9e8"][r];
+  px(ox, 0, RW, 96, sky);
+  const ground = ["#5bbf4a", "#2f7a3a", "#2a6fd6", "#8a7050", "#4a3a4a", "#3a3a44", "#ffffff"][r];
+  px(ox, 72, RW, 24, ground); px(ox, 72, RW, 2, "#00000033");
+  for (let i = 0; i < RW; i += 8) px(ox + i, 76 + (i * 7 % 13 > 6 ? 4 : 10), 2, 2, "#00000022");
+  if (r === 0) for (let i = 0; i < 4; i++) { const x = ox + 20 + i * 46; px(x, 52, 26, 20, "#f4e2c0"); px(x - 3, 44, 32, 8, "#d0453f"); px(x + 4, 44 - 6, 18, 6, "#d0453f"); px(x + 10, 60, 6, 12, "#7a4a2a"); }
+  if (r === 1) for (let i = 0; i < 9; i++) { const x = ox + 6 + i * 22, h = 20 + (i * 13) % 18; px(x + 6, 72 - h + 14, 4, h - 14, "#5a3a1a"); px(x, 72 - h, 16, 16, "#1f5a2a"); px(x + 3, 72 - h - 5, 10, 6, "#2a7a3a"); }
+  if (r === 2) { for (let i = 0; i < RW; i += 12) px(ox + i, 70 + (i / 12 % 2) * 2, 6, 2, "#cfeaff"); px(ox + 70, 56, 50, 12, "#7a4a2a"); px(ox + 66, 64, 58, 6, "#5a3418"); px(ox + 93, 26, 3, 30, "#5a3418"); px(ox + 78, 30, 30, 20, "#f4f4f4"); px(ox + 88, 36, 10, 8, "#222"); }
+  if (r === 3) { px(ox + 40, 18, 150, 54, "#bfae8e"); for (let y = 22; y < 72; y += 10) px(ox + 40, y, 150, 1, "#9a8a6a"); for (let x = 40; x < 190; x += 12) px(ox + x, 14, 8, 4, "#bfae8e"); px(ox + 100, 2, 22, 16, "#c96a5a"); px(ox + 104, 7, 4, 3, "#222"); px(ox + 114, 7, 4, 3, "#222"); }
+  if (r === 4) { for (let i = 0; i < 3; i++) { const x = ox + 10 + i * 64; for (let s = 0; s < 40; s++) px(x + s, 72 - s, 64 - s * 2 > 0 ? 64 - s * 2 : 0, 1, s > 30 ? "#e8e8f0" : "#2a1f33"); } px(ox + 160, 14, 14, 14, "#f6f1c8"); }
+  if (r === 5) for (let i = 0; i < 7; i++) { const x = ox + 4 + i * 28, h = 30 + (i * 17) % 30; px(x, 72 - h, 22, h, "#4a4a6a"); for (let y = 72 - h + 4; y < 70; y += 6) for (let k = 3; k < 20; k += 6) px(x + k, y, 3, 3, (i + y + k) % 3 ? "#ffd23f" : "#2a2a3a"); }
+  if (r === 6) { for (let i = 0; i < 5; i++) px(ox + 10 + i * 40, 60 + (i % 2) * 6, 34, 10, "#ffffff"); px(ox + 120, 20, 50, 40, "#e8d8ff"); px(ox + 116, 10, 12, 50, "#d0c0f0"); px(ox + 162, 10, 12, 50, "#d0c0f0"); px(ox + 116, 4, 12, 6, "#ff5c9d"); px(ox + 162, 4, 12, 6, "#ff5c9d"); px(ox + 138, 40, 14, 20, "#7a5aa8"); }
+}
+const HERO = ["..kkkk..", ".kpppppk", "kpkppkpk", ".kssssk.", ".kswwsk.", "..kbbk..", ".kbbbbk.", "..k..k.."];
+const HC = { k: "#1a1020", p: "#ff5c9d", s: "#ffd8b0", w: "#1a1020", b: "#3a5ad6" };
+function drawHero(x) {
+  const bob = walk % 2 ? 1 : 0;
+  HERO.forEach((row, y) => [...row].forEach((c, i) => { if (c !== ".") px(x + i * 2, 56 - bob + y * 2, 2, 2, HC[c]); }));
+}
+function render() {
+  if (Math.abs(targetX - heroX) > 0.5) { heroX += (targetX - heroX) * 0.06; walk = Math.floor(performance.now() / 150); } else heroX = targetX;
+  const cam = Math.max(0, Math.min(W - 320, heroX - 120));
+  cx.save(); cx.translate(-Math.round(cam), 0);
+  for (let r = 0; r < REGIONS.length; r++) if ((r + 1) * RW > cam && r * RW < cam + 320) drawRegion(r, r * RW);
+  drawHero(heroX); cx.restore();
+  requestAnimationFrame(render);
+}
+function setProgress(points, instant) {
+  targetX = 6 + (W - 30) * Math.min(points, MAX) / MAX;
+  if (instant) heroX = targetX;
+  $("where").textContent = REGIONS[Math.min(REGIONS.length - 1, Math.floor(points / MAX * REGIONS.length))];
+  $("dist").textContent = (points * 10).toLocaleString() + " m";
+}
+render();
+
+/* ---------- game ---------- */
+let run = null;
+function startRun(mode) {
+  const set = mode === "daily" ? pick(rng(dayNum * 7919)) : pick(Math.random);
+  run = { mode, set, i: 0, points: 0, picks: [] };
+  setProgress(0, true);
+  $("home").classList.add("hidden"); $("done").classList.add("hidden"); $("play").classList.remove("hidden");
+  nextRound();
+}
+function nextRound() {
+  const q = run.set[run.i];
+  $("prompt").textContent = q.q; $("reveal").innerHTML = ""; $("next").classList.add("hidden");
+  $("dots").textContent = run.picks.map(p => p ? "■" : "□").join("") + "▸" + "·".repeat(ROUNDS - run.i - 1);
+  const g = $("guess"); g.disabled = false; g.value = ""; g.focus();
+  run.left = SECONDS; run.deadline = performance.now() + SECONDS * 1000;
+  clearInterval(run.tick);
+  run.tick = setInterval(() => {
+    const ms = run.deadline - performance.now();
+    $("clock").textContent = Math.max(0, Math.ceil(ms / 1000));
+    $("bar").style.width = Math.max(0, ms / (SECONDS * 10)) + "%";
+    if (ms <= 0) answer(null);
+  }, 100);
+}
+function answer(text) {
+  clearInterval(run.tick);
+  const q = run.set[run.i], g = $("guess"); g.disabled = true;
+  const i = text ? match(q, text) : -1;
+  let html;
+  if (i < 0) {
+    run.picks.push(null);
+    html = `<div class="big" style="color:var(--bad)">${text ? "Not on the list" : "Time's up"}</div>`;
+  } else {
+    const t = tierOf(q, i), [name, pts, col] = TIERS[t];
+    run.points += pts; run.picks.push(t);
+    html = `<div class="big">${q.a[i][0]}</div><span class="tier" style="background:var(${col})">${name} +${pts}</span>`;
+  }
+  const gem = q.a[q.a.length - 1][0];
+  const samples = q.a.filter((_, k) => k !== i).slice(0, 3).map(a => a[0]);
+  html += `<p class="sub">Legendary answer: <b style="color:var(--t4)">${gem}</b><br>Others: ${samples.join(", ")}…</p>`;
+  $("reveal").innerHTML = html;
+  setProgress(run.points);
+  run.i++;
+  const b = $("next"); b.textContent = run.i < ROUNDS ? "Next" : "Finish"; b.classList.remove("hidden"); b.focus();
+}
+$("guess").onkeydown = e => { if (e.key === "Enter" && e.target.value.trim() && !e.target.disabled) answer(e.target.value.trim()); };
+$("next").onclick = () => run.i < ROUNDS ? nextRound() : finish();
+
+function finish() {
+  const icons = ["⬜", "🟩", "🟦", "🟪", "🟨"];
+  const grid = run.picks.map(p => p === null ? "⬛" : icons[p]).join("");
+  const region = $("where").textContent, m = (run.points * 10).toLocaleString();
+  if (run.mode === "daily") store.set("otakount.day", { day: dayKey, points: run.points, grid });
+  const best = Math.max(Number(store.get("otakount.bestpts", 0)) || 0, run.points); store.set("otakount.bestpts", best);
+  const share = `Otakount #${dayNum} ${grid}\n${m} m · reached ${region}`;
+  $("play").classList.add("hidden");
+  const d = $("done"); d.classList.remove("hidden");
+  d.innerHTML = `<div class="px" style="font-size:14px">Journey over</div>
+    <p class="big px" style="font-size:20px;color:var(--gold)">${m} m</p>
+    <p>You reached <b>${region}</b>. ${run.points >= MAX ? "A perfect run!" : `Best ever: ${(best * 10).toLocaleString()} m`}</p>
+    <p style="font-size:30px">${grid}</p>
+    <div class="row"><button class="go" id="share">Copy result</button><button id="again">Endless mode</button></div>`;
+  $("share").onclick = () => { navigator.clipboard?.writeText(share); $("share").textContent = "Copied"; };
+  $("again").onclick = () => startRun("endless");
 }
 
-function flash(text, kind) { const f = $("flash"); f.textContent = text; f.className = "flash " + kind; }
-
-$("guess").onkeydown = e => {
-  if (e.key !== "Enter" || game.over) return;
-  const v = e.target.value.trim(); if (!v) return;
-  e.target.value = "";
-  const i = match(v);
-  if (i < 0) return flash(`✗ ${v}`, "bad");
-  if (game.got.has(i)) return flash(`Already got ${game.q.a[i][0]}`, "bad");
-  game.got.add(i); game.time += BONUS;
-  flash(`✓ ${game.q.a[i][0]}  +${BONUS}s`, "good");
-  const s = document.createElement("span"); s.className = "new"; s.textContent = game.q.a[i][0];
-  $("found").prepend(s); update();
-  if (game.got.size === game.q.a.length) end();
-};
-
-function end() {
-  if (game.over) return;
-  game.over = true; clearInterval(game.tick);
-  $("guess").disabled = true; $("giveup").classList.add("hidden");
-  const n = game.got.size, prev = best[game.q.id] || 0;
-  if (n > prev) { best[game.q.id] = n; store.set("otakount.best", best); }
-  const r = $("result"); r.classList.remove("hidden");
-  r.innerHTML = `<div class="big">${n} / ${game.q.a.length}</div>
-    <p>${n > prev && prev ? "New best!" : prev ? `Your best: ${prev}` : ""}</p>
-    <div class="bar"><button class="primary" id="again">Play again</button><button id="next">Another question</button></div>`;
-  $("again").onclick = () => start(game.q);
-  $("next").onclick = () => { const pool = Q.filter(q => q !== game.q); start(pool[Math.floor(Math.random() * pool.length)]); };
-  $("found").innerHTML = game.q.a.map((a, i) => `<span class="${game.got.has(i) ? "" : "miss"}">${a[0]}</span>`).join("");
+function home() {
+  $("dayLabel").textContent = `Day #${dayNum}`;
+  const done = store.get("otakount.day", null);
+  if (done && done.day === dayKey) {
+    $("homeText").textContent = `Today's journey is done: ${(done.points * 10).toLocaleString()} m ${done.grid}. New prompts tomorrow. Endless mode is always open.`;
+    $("daily").disabled = true; setProgress(done.points, true);
+  } else $("homeText").textContent = `7 prompts, ${SECONDS} seconds each, one answer per prompt.`;
 }
-$("giveup").onclick = end;
-$("quit").onclick = () => { clearInterval(game?.tick); $("play").classList.add("hidden"); $("home").classList.remove("hidden"); renderHome(); };
-
-renderHome();
+$("daily").onclick = () => startRun("daily");
+$("endless").onclick = () => startRun("endless");
+home();
 </script>
 </body>
 </html>
