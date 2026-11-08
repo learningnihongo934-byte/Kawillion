@@ -1,0 +1,36 @@
+# Name a Naruto character
+@ Characters
+Naruto Uzumaki; Sasuke Uchiha; Sakura Haruno; Kakashi Hatake; Itachi Uchiha; Hinata Hyuga; Neji Hyuga; Rock Lee; Gaara; Shikamaru Nara
+Choji Akimichi; Ino Yamanaka; Kiba Inuzuka; Shino Aburame; Tenten; Might Guy; Jiraiya; Tsunade; Orochimaru; Minato Namikaze
+Kushina Uzumaki; Madara Uchiha; Obito Uchiha; Pain | Nagato; Konan; Kisame Hoshigaki; Deidara; Sasori; Hidan; Kakuzu
+Zetsu; Kabuto Yakushi; Iruka Umino; Hiruzen Sarutobi; Konohamaru; Killer Bee; Kurama; Yamato; Sai; Zabuza Momochi
+Haku; Temari; Kankuro; Asuma Sarutobi; Kurenai Yuhi; Danzo Shimura; Hashirama Senju; Tobirama Senju; Kaguya Otsutsuki; Boruto Uzumaki
+
+# Name a One Piece character
+@ Characters
+Monkey D. Luffy | Luffy; Roronoa Zoro | Zoro; Nami; Usopp; Sanji; Tony Tony Chopper | Chopper; Nico Robin | Robin; Franky; Brook; Jinbe
+Shanks; Portgas D. Ace | Ace; Sabo; Monkey D. Garp | Garp; Monkey D. Dragon | Dragon; Gol D. Roger | Roger; Whitebeard | Edward Newgate; Blackbeard | Marshall D. Teach; Trafalgar Law | Law; Eustass Kid | Kid
+Boa Hancock; Dracule Mihawk | Mihawk; Crocodile; Donquixote Doflamingo | Doflamingo; Buggy; Kaido; Charlotte Linlin | Big Mom; Akainu; Aokiji; Kizaru
+Smoker; Tashigi; Nefertari Vivi | Vivi; Arlong; Enel; Rob Lucci | Lucci; Bartholomew Kuma | Kuma; Yamato; Kozuki Oden | Oden; Silvers Rayleigh | Rayleigh
+Marco; Koby; Bon Clay | Mr. 2; Charlotte Katakuri | Katakuri; Bartolomeo; Carrot; Perona; Hody Jones; Gecko Moria | Moria; Kaya
+
+# Name a Demon Slayer character
+@ Characters
+Tanjiro Kamado; Nezuko Kamado; Zenitsu Agatsuma; Inosuke Hashibira; Kanao Tsuyuri; Genya Shinazugawa; Giyu Tomioka; Shinobu Kocho; Kyojuro Rengoku; Tengen Uzui
+Mitsuri Kanroji; Muichiro Tokito; Gyomei Himejima; Sanemi Shinazugawa; Obanai Iguro; Kagaya Ubuyashiki; Sakonji Urokodaki; Sabito; Makomo; Kanae Kocho
+Muzan Kibutsuji; Kokushibo; Doma; Akaza; Hantengu; Gyokko; Daki; Gyutaro; Rui; Enmu
+Kaigaku; Nakime; Tamayo; Yushiro; Kotetsu; Haganezuka; Jigoro Kuwajima; Yoriichi Tsugikuni; Aoi Kanzaki; Murata
+
+# Name a Jujutsu Kaisen character
+@ Characters
+Yuji Itadori; Megumi Fushiguro; Nobara Kugisaki; Satoru Gojo; Ryomen Sukuna | Sukuna; Maki Zenin; Toge Inumaki; Panda; Yuta Okkotsu; Kento Nanami
+Suguru Geto; Kenjaku; Mahito; Jogo; Hanami; Choso; Aoi Todo; Noritoshi Kamo; Mai Zenin; Kasumi Miwa
+Momo Nishimiya; Mechamaru; Masamichi Yaga; Shoko Ieiri; Yoshinobu Gakuganji; Toji Fushiguro; Naoya Zenin; Hiromi Higuruma; Kinji Hakari; Kirara Hoshi
+Yuki Tsukumo; Takaba; Hajime Kashimo; Ryu Ishigori; Uraume; Junpei Yoshino; Riko Amanai; Utahime Iori; Mei Mei; Ui Ui
+
+# Name an Attack on Titan character
+@ Characters
+Eren Yeager; Mikasa Ackerman; Armin Arlert; Levi Ackerman; Erwin Smith; Hange Zoe; Jean Kirstein; Connie Springer; Sasha Blouse; Historia Reiss | Krista
+Ymir; Reiner Braun; Bertholdt Hoover; Annie Leonhart; Zeke Yeager; Pieck Finger; Porco Galliard; Marcel Galliard; Falco Grice; Gabi Braun
+Colt Grice; Grisha Yeager; Carla Yeager; Floch Forster; Marco Bott; Hannes; Keith Shadis; Dot Pixis; Kenny Ackerman; Rod Reiss
+Uri Reiss; Frieda Reiss; Yelena; Onyankopon; Theo Magath; Willy Tybur; Ymir Fritz; Moblit Berner; Petra Ral; Nile Dok

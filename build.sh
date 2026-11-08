@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Builds dist/ from src/index.html and data/*.txt.
+#   ./build.sh          build
+#   ./build.sh serve    build, then serve at http://localhost:8830
+#   ./build.sh deploy   build, then publish to https://otakount.rennko.tech (Cloudflare Workers)
+set -euo pipefail
+cd "$(dirname "$0")"
+mkdir -p dist
+cp src/index.html dist/index.html
+python3 tools/compile.py
+case "${1:-}" in
+  serve) echo "Serving at http://localhost:8830"; python3 -m http.server 8830 --directory dist ;;
+  deploy) npx -y wrangler@4 deploy ;;
+esac

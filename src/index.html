@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Otakount</title>
+<meta name="description" content="Anime list trivia: name as many answers as you can before the clock runs out.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff7f3;--card:#fff;--ink:#2a1e2e;--mute:#8a7a8e;--line:#f0dfe6;--accent:#ff4f8b;--accent2:#7c5cff;--good:#1fb57a;--bad:#e5484d}
+@media (prefers-color-scheme:dark){:root{--bg:#17121c;--card:#221a2a;--ink:#f6eef8;--mute:#a597ab;--line:#33283c;--accent:#ff6b9e;--accent2:#9a82ff;--good:#3ad08f;--bad:#ff6b6f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"M PLUS Rounded 1c",system-ui,sans-serif;min-height:100vh}
+main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:40px;margin:8px 0 2px;letter-spacing:-1px}
+h1 span{color:var(--accent)}
+.sub{color:var(--mute);margin:0 0 20px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 16px;background:var(--line);color:var(--ink)}
+button.primary{background:var(--accent);color:#fff;font-weight:800}
+button:hover{filter:brightness(1.05)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+input[type=search],#guess{font:inherit;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);flex:1;min-width:0}
+#guess{font-size:20px;width:100%}
+#guess:focus,input[type=search]:focus{outline:none;border-color:var(--accent2)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 12px;border-radius:999px;font-size:14px}
+.chip.on{background:var(--accent2);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.q{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px}
+.q b{font-size:16px}
+.q small{color:var(--mute)}
+.q:hover{border-color:var(--accent)}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0}
+.big{font-size:34px;font-weight:800}
+.timer.low{color:var(--bad)}
+.prompt{font-size:26px;font-weight:800;margin:6px 0}
+.meter{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s}
+.flash{height:24px;font-weight:800;margin:6px 0}
+.flash.good{color:var(--good)}.flash.bad{color:var(--bad)}
+.found{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.found span{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:4px 10px;font-size:14px}
+.found span.new{border-color:var(--good);animation:pop .4s}
+.found span.miss{color:var(--mute);border-style:dashed}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+.hidden{display:none!important}
+.result{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;margin:12px 0}
+.result .big{color:var(--accent)}
+footer{color:var(--mute);font-size:13px;text-align:center;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+  <section id="home">
+    <h1>Otaku<span>unt</span></h1>
+    <p class="sub">Pick a question, then name as many answers as you can. Every right answer adds 3 seconds.</p>
+    <div class="bar">
+      <button class="primary" id="random">Random question</button>
+      <input type="search" id="search" placeholder="Search questions">
+    </div>
+    <div class="chips" id="cats"></div>
+    <div class="grid" id="list"></div>
+  </section>
+
+  <section id="play" class="hidden">
+    <div class="hud">
+      <button id="quit">Back</button>
+      <div class="big timer" id="timer">90</div>
+      <button id="giveup">Give up</button>
+    </div>
+    <div class="prompt" id="prompt"></div>
+    <div class="meter"><i id="meter"></i></div>
+    <div class="sub" id="count"></div>
+    <input id="guess" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type an answer and press Enter">
+    <div class="flash" id="flash"></div>
+    <div id="result" class="result hidden"></div>
+    <div class="found" id="found"></div>
+  </section>
+  <footer>Made by Virat Reddy Kaukuntla</footer>
+</main>
+<script src="questions.js"></script>
+<script>
+const Q = window.QUESTIONS, $ = id => document.getElementById(id);
+const START = 90, BONUS = 3;
+let cat = "All", game = null;
+
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} }
+};
+let best = store.get("otakount.best", {});
+
+// lowercase, drop accents, punctuation, and "the"
+function norm(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/&/g, "and").replace(/[^a-z0-9 ]+/g, " ").replace(/\bthe\b/g, " ")
+    .replace(/\s+/g, " ").trim();
+}
+const squash = s => norm(s).replace(/ /g, "").replace(/ou/g, "o").replace(/uu/g, "u");
+
+function lev(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i]; let lo = i;
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      lo = Math.min(lo, cur[j]);
+    }
+    if (lo > max) return max + 1;
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+// Each answer gets a set of accepted keys: every spelling, plus any single word
+// of the name that no other answer in this question shares (so "Kakashi" works).
+function buildKeys(q) {
+  const words = new Map();
+  q.a.forEach((alts, i) => alts.forEach(s => norm(s).split(" ").forEach(w => {
+    if (w.length < 3 || /^\d+$/.test(w)) return;
+    if (!words.has(w)) words.set(w, new Set());
+    words.get(w).add(i);
+  })));
+  return q.a.map(alts => {
+    const keys = new Set(alts.map(squash));
+    alts.forEach(s => norm(s).split(" ").forEach(w => {
+      if (words.get(w)?.size === 1 && norm(s).split(" ").length > 1 && w.length >= 4) keys.add(squash(w));
+    }));
+    return [...keys];
+  });
+}
+
+function match(guess) {
+  const g = squash(guess);
+  if (g.length < 2) return -1;
+  let bestI = -1, bestD = 9;
+  game.keys.forEach((keys, i) => keys.forEach(k => {
+    const max = k.length >= 10 ? 2 : k.length >= 5 ? 1 : 0;
+    const d = k === g ? 0 : lev(g, k, max);
+    if (d <= max && d < bestD) { bestD = d; bestI = i; }
+  }));
+  return bestI;
+}
+
+function renderHome() {
+  const cats = ["All", ...new Set(Q.map(q => q.c))];
+  $("cats").innerHTML = cats.map(c => `<button class="chip ${c === cat ? "on" : ""}" data-c="${c}">${c}</button>`).join("");
+  const term = norm($("search").value);
+  $("list").innerHTML = Q.filter(q => (cat === "All" || q.c === cat) && (!term || norm(q.q).includes(term)))
+    .map(q => `<button class="q" data-id="${q.id}"><b>${q.q}</b><small>${q.c} · ${q.a.length} answers${best[q.id] ? ` · best ${best[q.id]}` : ""}</small></button>`).join("");
+}
+$("cats").onclick = e => { if (e.target.dataset.c) { cat = e.target.dataset.c; renderHome(); } };
+$("search").oninput = renderHome;
+$("list").onclick = e => { const b = e.target.closest(".q"); if (b) start(Q[b.dataset.id]); };
+$("random").onclick = () => { const pool = Q.filter(q => cat === "All" || q.c === cat); start(pool[Math.floor(Math.random() * pool.length)]); };
+
+function start(q) {
+  game = { q, keys: buildKeys(q), got: new Set(), time: START, over: false };
+  $("home").classList.add("hidden"); $("play").classList.remove("hidden");
+  $("prompt").textContent = q.q; $("found").innerHTML = ""; $("flash").textContent = "";
+  $("result").classList.add("hidden"); $("guess").disabled = false; $("guess").value = "";
+  $("giveup").classList.remove("hidden");
+  update(); $("guess").focus();
+  clearInterval(game.tick);
+  game.tick = setInterval(() => { game.time--; update(); if (game.time <= 0) end(); }, 1000);
+}
+
+function update() {
+  $("timer").textContent = Math.max(0, game.time);
+  $("timer").classList.toggle("low", game.time <= 10);
+  $("count").textContent = `${game.got.size} of ${game.q.a.length} found`;
+  $("meter").style.width = (100 * game.got.size / game.q.a.length) + "%";
+}
+
+function flash(text, kind) { const f = $("flash"); f.textContent = text; f.className = "flash " + kind; }
+
+$("guess").onkeydown = e => {
+  if (e.key !== "Enter" || game.over) return;
+  const v = e.target.value.trim(); if (!v) return;
+  e.target.value = "";
+  const i = match(v);
+  if (i < 0) return flash(`✗ ${v}`, "bad");
+  if (game.got.has(i)) return flash(`Already got ${game.q.a[i][0]}`, "bad");
+  game.got.add(i); game.time += BONUS;
+  flash(`✓ ${game.q.a[i][0]}  +${BONUS}s`, "good");
+  const s = document.createElement("span"); s.className = "new"; s.textContent = game.q.a[i][0];
+  $("found").prepend(s); update();
+  if (game.got.size === game.q.a.length) end();
+};
+
+function end() {
+  if (game.over) return;
+  game.over = true; clearInterval(game.tick);
+  $("guess").disabled = true; $("giveup").classList.add("hidden");
+  const n = game.got.size, prev = best[game.q.id] || 0;
+  if (n > prev) { best[game.q.id] = n; store.set("otakount.best", best); }
+  const r = $("result"); r.classList.remove("hidden");
+  r.innerHTML = `<div class="big">${n} / ${game.q.a.length}</div>
+    <p>${n > prev && prev ? "New best!" : prev ? `Your best: ${prev}` : ""}</p>
+    <div class="bar"><button class="primary" id="again">Play again</button><button id="next">Another question</button></div>`;
+  $("again").onclick = () => start(game.q);
+  $("next").onclick = () => { const pool = Q.filter(q => q !== game.q); start(pool[Math.floor(Math.random() * pool.length)]); };
+  $("found").innerHTML = game.q.a.map((a, i) => `<span class="${game.got.has(i) ? "" : "miss"}">${a[0]}</span>`).join("");
+}
+$("giveup").onclick = end;
+$("quit").onclick = () => { clearInterval(game?.tick); $("play").classList.add("hidden"); $("home").classList.remove("hidden"); renderHome(); };
+
+renderHome();
+</script>
+</body>
+</html>
