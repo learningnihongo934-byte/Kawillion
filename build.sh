@@ -2,7 +2,7 @@
 # Builds dist/ from src/index.html and data/*.txt.
 #   ./build.sh          build
 #   ./build.sh serve    build, then serve at http://localhost:8830
-#   ./build.sh deploy   build, then publish to https://otakount.rennko.tech (Cloudflare Workers)
+#   ./build.sh deploy   build, then publish to https://kawillion.rennko.tech (Cloudflare Workers)
 set -euo pipefail
 cd "$(dirname "$0")"
 mkdir -p dist

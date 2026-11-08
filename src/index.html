@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Otakount</title>
+<title>Kawillion</title>
 <meta name="description" content="Daily anime trivia. Seven prompts, one answer each. Rarer answers carry you further across a pixel anime world.">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -40,7 +40,7 @@ footer{color:var(--mute);text-align:center;margin-top:30px}
 </head>
 <body>
 <main>
-  <h1>OTAKOUNT</h1>
+  <h1>KAWILLION</h1>
   <p class="sub">Seven anime prompts a day. Give one answer to each. Common answers move you a little, rare ones carry you higher up the tower.</p>
   <canvas id="world" width="160" height="128"></canvas>
   <div class="hud"><span id="where">Starter Village</span><span id="dist">0 m</span></div>
@@ -215,9 +215,9 @@ function finish() {
   const icons = ["⬜", "🟩", "🟦", "🟪", "🟨"];
   const grid = run.picks.map(p => p === null ? "⬛" : icons[p]).join("");
   const region = $("where").textContent, m = (run.points * 10).toLocaleString();
-  if (run.mode === "daily") store.set("otakount.day", { day: dayKey, points: run.points, grid });
-  const best = Math.max(Number(store.get("otakount.bestpts", 0)) || 0, run.points); store.set("otakount.bestpts", best);
-  const share = `Otakount #${dayNum} ${grid}\n${m} m · reached ${region}`;
+  if (run.mode === "daily") store.set("kawillion.day", { day: dayKey, points: run.points, grid });
+  const best = Math.max(Number(store.get("kawillion.bestpts", 0)) || 0, run.points); store.set("kawillion.bestpts", best);
+  const share = `Kawillion #${dayNum} ${grid}\n${m} m · reached ${region}`;
   $("play").classList.add("hidden");
   const d = $("done"); d.classList.remove("hidden");
   d.innerHTML = `<div class="px" style="font-size:14px">Journey over</div>
@@ -231,7 +231,7 @@ function finish() {
 
 function home() {
   $("dayLabel").textContent = `Day #${dayNum}`;
-  const done = store.get("otakount.day", null);
+  const done = store.get("kawillion.day", null);
   if (done && done.day === dayKey) {
     $("homeText").textContent = `Today's journey is done: ${(done.points * 10).toLocaleString()} m ${done.grid}. New prompts tomorrow. Endless mode is always open.`;
     $("daily").disabled = true; setProgress(done.points, true);

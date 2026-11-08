@@ -1,9 +1,9 @@
 {
-  // Otakount: static assets only, served from dist/ (./build.sh deploy)
-  "name": "otakount",
+  // Kawillion: static assets only, served from dist/ (./build.sh deploy)
+  "name": "kawillion",
   "compatibility_date": "2025-10-01",
   "assets": { "directory": "dist" },
   // more specific than Rennko Cloud's *.rennko.tech/* route, so this host stays here
-  "routes": [{ "pattern": "otakount.rennko.tech", "custom_domain": true }, { "pattern": "otakount.rennko.tech/*", "zone_name": "rennko.tech" }],
+  "routes": [{ "pattern": "kawillion.rennko.tech", "custom_domain": true }, { "pattern": "kawillion.rennko.tech/*", "zone_name": "rennko.tech" }],
   "workers_dev": true
 }
