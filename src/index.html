@@ -390,7 +390,10 @@ const sfx = (() => {
 const cv = $("stage"), cx = cv.getContext("2d"), ov = $("overlay"), oc = ov.getContext("2d");
 const SW = 160, SH = 128, NS = REGIONS.length, WH = NS * SH;
 const scenes = REGIONS.map((_, i) => Object.assign(new Image(), { src: `art/s${i}.png` }));
-const heroImg = Object.assign(new Image(), { src: "art/hero.png" });
+// climber sprite sheet (art-src/climber.pixeter): 0-1 idle breathing, 2-4 climbing, 5 cheer
+const climber = Object.assign(new Image(), { src: "art/climber.png" }), CW = 24, CH = 32;
+const CLIMB_CYCLE = [2, 3, 4, 3];
+let cheerUntil = 0;
 let VW = SW, VH = 120, sy = 1;
 function resize() {
   const w = innerWidth, h = innerHeight, k = Math.min(w / SW, h / 118);
@@ -528,10 +531,11 @@ function draw(t) {
     dot(ox - 1, 0, "rgba(0,0,0,.5)", 1, VH); dot(ox + SW, 0, "rgba(0,0,0,.5)", 1, VH);
   }
   drawWorld(ox, t, cam, true);
-  const hx = ox + 72, hy = Math.round(feetY(heroAlt) - 20 - cam);
-  if (heroImg.complete) {
-    const flip = climb && Math.floor(t / 130) % 2, bob = !climb && Math.floor(t / 500) % 2;
-    cx.save(); cx.translate(hx + (flip ? 16 : 0), hy - bob); cx.scale(flip ? -1 : 1, 1); cx.drawImage(heroImg, 0, 0); cx.restore();
+  const feet = Math.round(feetY(heroAlt) - cam);
+  if (!climb) { cx.globalAlpha = 0.3; blob(ox + 70, feet - 2, 20, 4, "#000", "#000"); cx.globalAlpha = 1; }
+  if (climber.complete) {
+    const f = climb ? CLIMB_CYCLE[Math.floor(t / 120) % 4] : t < cheerUntil ? 5 : Math.floor(t / 650) % 2;
+    cx.drawImage(climber, f * CW, 0, CW, CH, ox + 80 - CW / 2, feet - CH + 1, CW, CH);
   }
   for (const p of fx) { cx.globalAlpha = Math.max(0, 1 - p.life / p.max); dot(ox + p.x, p.y - cam, p.c); }
   cx.globalAlpha = 1;
@@ -569,8 +573,8 @@ function frame(t) {
     const f = Math.min(1, (t - climb.t0) / climb.dur), e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
     heroAlt = climb.from + (climb.to - climb.from) * e;
     const fr = Math.floor(t / 130); if (fr !== stepFrame) { stepFrame = fr; sfx.step(); }
-    if (climb.tier >= 2 && Math.random() < 0.6) fx.push({ x: 74 + Math.random() * 12, y: feetY(heroAlt) - 4 - Math.random() * 14, vx: (Math.random() - 0.5) * 0.02, vy: 0.012, life: 0, max: 700, c: TIERS[climb.tier].col });
-    if (f >= 1) { const done = climb.done; heroAlt = climb.to; climb = null; burst(80, feetY(heroAlt) - 10, 12, ["#ffffff", "#fee761"], 0.8); done && done(); }
+    if (climb.tier >= 2 && Math.random() < 0.6) fx.push({ x: 70 + Math.random() * 20, y: feetY(heroAlt) - 4 - Math.random() * 26, vx: (Math.random() - 0.5) * 0.02, vy: 0.012, life: 0, max: 700, c: TIERS[climb.tier].col });
+    if (f >= 1) { const done = climb.done; if (climb.tier >= 3) cheerUntil = t + 1600; heroAlt = climb.to; climb = null; burst(80, feetY(heroAlt) - 16, 12, ["#ffffff", "#fee761"], 0.8); done && done(); }
   }
   const region = Math.min(NS - 1, Math.floor(heroAlt / 1000 + 1e-6));
   if (run && region > lastRegion) { lastRegion = region; banner(region); }
@@ -608,7 +612,7 @@ function startRun(kind) {
     // reloading in the middle of a prompt counts as leaving it
     if (saved.pending === run.i && run.i < ROUNDS) { run.results.push({ q: run.set[run.i].q, answer: null, tier: -2, pts: 0, flag: "tabs" }); run.i++; saveDaily(); }
   }
-  heroAlt = run.points * 10; climb = null; lastRegion = Math.min(NS - 1, Math.floor(heroAlt / 1000)); camSpeed = 0.05;
+  heroAlt = run.points * 10; climb = null; cheerUntil = 0; lastRegion = Math.min(NS - 1, Math.floor(heroAlt / 1000)); camSpeed = 0.05;
   show("title", false); show("summary", false); show("hud", true); document.body.classList.remove("on-title");
   renderHud(); nextPrompt();
 }
@@ -674,7 +678,7 @@ function resolve(i, flagKind) {
   if (tier < 0) { if (flagKind) { sfx.wrong(); flash(FLAG_COL); } else sfx.miss(); setTimeout(showNext, 900); return; }
   sfx.tier(tier); flash(TIERS[tier].col);
   if (tier >= 3) { const s = $("stage"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
-  burst(80, feetY(heroAlt) - 10, 10 + tier * 12, [TIERS[tier].col, "#ffffff"], 1 + tier * 0.3);
+  burst(80, feetY(heroAlt) - 16, 10 + tier * 12, [TIERS[tier].col, "#ffffff"], 1 + tier * 0.3);
   climb = { from: heroAlt, to: Math.min(MAXALT, heroAlt + pts * 10), t0: performance.now(), dur: 600 + pts * 15, tier, done: showNext };
 }
 function showNext() {
@@ -727,7 +731,7 @@ function finish() {
   s.best = Math.max(s.best, run.points);
   for (const r of run.results) r.tier === -2 ? s.flags = (s.flags || 0) + 1 : r.tier < 0 ? s.misses++ : s.tiers[r.tier]++;
   store.set("kaw.stats", s);
-  if (run.points >= MAXPTS) { sfx.fanfare(); for (let k = 0; k < 4; k++) setTimeout(() => burst(80, feetY(heroAlt) - 10, 40, TIERS.map(T => T.col), 2), k * 250); }
+  if (run.points >= MAXPTS) { sfx.fanfare(); cheerUntil = Infinity; for (let k = 0; k < 4; k++) setTimeout(() => burst(80, feetY(heroAlt) - 16, 40, TIERS.map(T => T.col), 2), k * 250); }
   else sfx.done();
   showSummary(data);
 }
@@ -736,7 +740,7 @@ const regionAt = alt => REGIONS[Math.min(NS - 1, Math.floor(alt / 1000))][0];
 function showSummary(data) {
   screen = "summary"; focus = 0.4; clearInterval(timer);
   if (!run) run = { kind: data.kind, results: data.results, points: data.points, i: ROUNDS };
-  heroAlt = data.points * 10; lastRegion = NS;
+  heroAlt = data.points * 10; lastRegion = NS; if (data.points >= MAXPTS) cheerUntil = Infinity;
   ["title", "card", "dock", "reveal"].forEach(id => show(id, false)); show("hud", true); renderHud(); document.body.classList.remove("on-title");
   const alt = data.points * 10;
   $("smHead").textContent = data.kind === "daily" ? `CLIMB REPORT · DAY #${dayNum}` : "ENDLESS CLIMB REPORT";
@@ -758,7 +762,7 @@ function shareText(data) {
 function home() {
   screen = "title"; run = null; climb = null; clearInterval(timer); document.body.classList.add("on-title");
   ["hud", "card", "dock", "reveal", "summary", "banner"].forEach(id => show(id, false)); show("title", true);
-  focus = 0.55; heroAlt = 0; lastRegion = 0;
+  focus = 0.55; heroAlt = 0; lastRegion = 0; cheerUntil = 0;
   const saved = store.get("kaw.daily", null), s = stats();
   $("dayLabel").textContent = `DAY #${dayNum}`;
   $("streak").textContent = s.streak && (s.last === dayKey || s.last === yesterKey) ? `🔥 ${s.streak}-day streak` : "";
