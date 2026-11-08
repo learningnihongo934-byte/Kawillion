@@ -21,8 +21,8 @@ button.go{background:var(--pink)}
 button:active{transform:translate(2px,2px)}
 button:disabled{opacity:.5;cursor:default}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-canvas#world{width:100%;aspect-ratio:320/96;display:block;border:4px solid var(--edge);image-rendering:pixelated;background:#000}
-.hud{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:24px}
+canvas#world{width:100%;max-width:480px;margin:0 auto;aspect-ratio:160/128;display:block;border:4px solid var(--edge);image-rendering:pixelated;background:#000}
+.hud{max-width:480px;margin-left:auto!important;margin-right:auto!important;display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:24px}
 .prompt{font-family:"Press Start 2P",monospace;font-size:15px;line-height:1.6;margin:6px 0 12px}
 .timebar{height:14px;border:3px solid var(--edge);background:#111;margin-bottom:12px}
 .timebar i{display:block;height:100%;background:var(--gold);width:100%}
@@ -41,8 +41,8 @@ footer{color:var(--mute);text-align:center;margin-top:30px}
 <body>
 <main>
   <h1>OTAKOUNT</h1>
-  <p class="sub">Seven anime prompts a day. Give one answer to each. Common answers move you a little, rare ones send you far across the world.</p>
-  <canvas id="world" width="320" height="96"></canvas>
+  <p class="sub">Seven anime prompts a day. Give one answer to each. Common answers move you a little, rare ones carry you higher up the tower.</p>
+  <canvas id="world" width="160" height="128"></canvas>
   <div class="hud"><span id="where">Starter Village</span><span id="dist">0 m</span></div>
 
   <section id="home" class="box">
@@ -133,43 +133,34 @@ function pick(rand) {
   return ids.slice(0, ROUNDS).map(i => Q[i]);
 }
 
-/* ---------- pixel world ---------- */
-const cv = $("world"), cx = cv.getContext("2d"), RW = 200, W = REGIONS.length * RW;
-let heroX = 0, targetX = 0, walk = 0;
-function px(x, y, w, h, c) { cx.fillStyle = c; cx.fillRect(Math.round(x), Math.round(y), w, h); }
-function drawRegion(r, ox) {
-  const sky = ["#7ec8ff", "#6ab0e8", "#9bdcff", "#c9a87a", "#5a3a6a", "#2a2a5a", "#ffc9e8"][r];
-  px(ox, 0, RW, 96, sky);
-  const ground = ["#5bbf4a", "#2f7a3a", "#2a6fd6", "#8a7050", "#4a3a4a", "#3a3a44", "#ffffff"][r];
-  px(ox, 72, RW, 24, ground); px(ox, 72, RW, 2, "#00000033");
-  for (let i = 0; i < RW; i += 8) px(ox + i, 76 + (i * 7 % 13 > 6 ? 4 : 10), 2, 2, "#00000022");
-  if (r === 0) for (let i = 0; i < 4; i++) { const x = ox + 20 + i * 46; px(x, 52, 26, 20, "#f4e2c0"); px(x - 3, 44, 32, 8, "#d0453f"); px(x + 4, 44 - 6, 18, 6, "#d0453f"); px(x + 10, 60, 6, 12, "#7a4a2a"); }
-  if (r === 1) for (let i = 0; i < 9; i++) { const x = ox + 6 + i * 22, h = 20 + (i * 13) % 18; px(x + 6, 72 - h + 14, 4, h - 14, "#5a3a1a"); px(x, 72 - h, 16, 16, "#1f5a2a"); px(x + 3, 72 - h - 5, 10, 6, "#2a7a3a"); }
-  if (r === 2) { for (let i = 0; i < RW; i += 12) px(ox + i, 70 + (i / 12 % 2) * 2, 6, 2, "#cfeaff"); px(ox + 70, 56, 50, 12, "#7a4a2a"); px(ox + 66, 64, 58, 6, "#5a3418"); px(ox + 93, 26, 3, 30, "#5a3418"); px(ox + 78, 30, 30, 20, "#f4f4f4"); px(ox + 88, 36, 10, 8, "#222"); }
-  if (r === 3) { px(ox + 40, 18, 150, 54, "#bfae8e"); for (let y = 22; y < 72; y += 10) px(ox + 40, y, 150, 1, "#9a8a6a"); for (let x = 40; x < 190; x += 12) px(ox + x, 14, 8, 4, "#bfae8e"); px(ox + 100, 2, 22, 16, "#c96a5a"); px(ox + 104, 7, 4, 3, "#222"); px(ox + 114, 7, 4, 3, "#222"); }
-  if (r === 4) { for (let i = 0; i < 3; i++) { const x = ox + 10 + i * 64; for (let s = 0; s < 40; s++) px(x + s, 72 - s, 64 - s * 2 > 0 ? 64 - s * 2 : 0, 1, s > 30 ? "#e8e8f0" : "#2a1f33"); } px(ox + 160, 14, 14, 14, "#f6f1c8"); }
-  if (r === 5) for (let i = 0; i < 7; i++) { const x = ox + 4 + i * 28, h = 30 + (i * 17) % 30; px(x, 72 - h, 22, h, "#4a4a6a"); for (let y = 72 - h + 4; y < 70; y += 6) for (let k = 3; k < 20; k += 6) px(x + k, y, 3, 3, (i + y + k) % 3 ? "#ffd23f" : "#2a2a3a"); }
-  if (r === 6) { for (let i = 0; i < 5; i++) px(ox + 10 + i * 40, 60 + (i % 2) * 6, 34, 10, "#ffffff"); px(ox + 120, 20, 50, 40, "#e8d8ff"); px(ox + 116, 10, 12, 50, "#d0c0f0"); px(ox + 162, 10, 12, 50, "#d0c0f0"); px(ox + 116, 4, 12, 6, "#ff5c9d"); px(ox + 162, 4, 12, 6, "#ff5c9d"); px(ox + 138, 40, 14, 20, "#7a5aa8"); }
-}
-const HERO = ["..kkkk..", ".kpppppk", "kpkppkpk", ".kssssk.", ".kswwsk.", "..kbbk..", ".kbbbbk.", "..k..k.."];
-const HC = { k: "#1a1020", p: "#ff5c9d", s: "#ffd8b0", w: "#1a1020", b: "#3a5ad6" };
-function drawHero(x) {
-  const bob = walk % 2 ? 1 : 0;
-  HERO.forEach((row, y) => [...row].forEach((c, i) => { if (c !== ".") px(x + i * 2, 56 - bob + y * 2, 2, 2, HC[c]); }));
-}
+/* ---------- pixel world: scenes drawn in Pixeter (src/art), stacked bottom to top ---------- */
+const cv = $("world"), cx = cv.getContext("2d"), SH = 128, H = REGIONS.length * SH;
+const scenes = REGIONS.map((_, i) => Object.assign(new Image(), { src: `art/s${i}.png` }));
+const hero = Object.assign(new Image(), { src: "art/hero.png" });
+const BOTTOM = H - 26, TOP = 14;          // hero's y at 0 points and at a perfect run
+let heroY = BOTTOM, targetY = BOTTOM;
 function render() {
-  if (Math.abs(targetX - heroX) > 0.5) { heroX += (targetX - heroX) * 0.06; walk = Math.floor(performance.now() / 150); } else heroX = targetX;
-  const cam = Math.max(0, Math.min(W - 320, heroX - 120));
-  cx.save(); cx.translate(-Math.round(cam), 0);
-  for (let r = 0; r < REGIONS.length; r++) if ((r + 1) * RW > cam && r * RW < cam + 320) drawRegion(r, r * RW);
-  drawHero(heroX); cx.restore();
+  const moving = Math.abs(targetY - heroY) > 0.5;
+  heroY = moving ? heroY + (targetY - heroY) * 0.05 : targetY;
+  const cam = Math.max(0, Math.min(H - SH, heroY - 70));
+  cx.imageSmoothingEnabled = false;
+  cx.clearRect(0, 0, 160, SH);
+  scenes.forEach((img, i) => {   // scene 0 sits at the bottom of the tower
+    const y = H - (i + 1) * SH - cam;
+    if (img.complete && y > -SH && y < SH) cx.drawImage(img, 0, Math.round(y));
+  });
+  if (hero.complete) {
+    const flip = moving && Math.floor(performance.now() / 160) % 2;
+    cx.save(); cx.translate(72 + (flip ? 16 : 0), Math.round(heroY - cam)); cx.scale(flip ? -1 : 1, 1);
+    cx.drawImage(hero, 0, 0); cx.restore();
+  }
   requestAnimationFrame(render);
 }
 function setProgress(points, instant) {
-  targetX = 6 + (W - 30) * Math.min(points, MAX) / MAX;
-  if (instant) heroX = targetX;
+  targetY = BOTTOM - (BOTTOM - TOP) * Math.min(points, MAX) / MAX;
+  if (instant) heroY = targetY;
   $("where").textContent = REGIONS[Math.min(REGIONS.length - 1, Math.floor(points / MAX * REGIONS.length))];
-  $("dist").textContent = (points * 10).toLocaleString() + " m";
+  $("dist").textContent = (points * 10).toLocaleString() + " m up";
 }
 render();
 

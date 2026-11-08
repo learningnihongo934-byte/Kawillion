@@ -6,7 +6,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 mkdir -p dist
-cp src/index.html dist/index.html
+cp src/index.html dist/index.html && rm -rf dist/art && cp -R src/art dist/art
 python3 tools/compile.py
 case "${1:-}" in
   serve) echo "Serving at http://localhost:8830"; python3 -m http.server 8830 --directory dist ;;
