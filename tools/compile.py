@@ -5,6 +5,9 @@ File format (one or more questions per file):
   # Name a Naruto character        <- starts a question
   @ Characters                     <- category
   Naruto Uzumaki | Naruto; Sasuke  <- answers split by ";", extra spellings by "|"
+  * Boruto Uzumaki                 <- the Legendary gem (always placed last)
+  + Name a Naruto character        <- adds more answers to a question from an earlier file
+Answers are written most famous first; that order is the starting guess at rarity.
 """
 import json, pathlib, sys
 
@@ -18,8 +21,12 @@ for f in sorted((root / "data").glob("*.txt")):
         if line.startswith("#"):
             cur = {"q": line[1:].strip(), "c": "Misc", "a": []}
             questions.append(cur)
+        elif line.startswith("+"):
+            cur = next(q for q in questions if q["q"] == line[1:].strip())
         elif line.startswith("@"):
             cur["c"] = line[1:].strip()
+        elif line.startswith("*"):
+            cur["gem"] = [p.strip() for p in line[1:].split("|") if p.strip()]
         else:
             for item in line.split(";"):
                 parts = [p.strip() for p in item.split("|") if p.strip()]
@@ -28,9 +35,15 @@ for f in sorted((root / "data").glob("*.txt")):
 
 for i, q in enumerate(questions):
     q["id"] = i
+    gem = q.pop("gem", None)
+    if gem:
+        q["a"] = [a for a in q["a"] if a[0].lower() != gem[0].lower()] + [gem]
 total = sum(len(q["a"]) for q in questions)
 (root / "dist").mkdir(exist_ok=True)
 (root / "dist" / "questions.js").write_text("window.QUESTIONS=" + json.dumps(questions, ensure_ascii=False, separators=(",", ":")) + ";")
+# the Worker only accepts answer counts for these questions
+(root / "build").mkdir(exist_ok=True)
+(root / "build" / "keys.json").write_text(json.dumps({q["q"]: len(q["a"]) for q in questions}, ensure_ascii=False))
 print(f"{len(questions)} questions, {total} answers (avg {total // max(1, len(questions))})")
 if "-v" in sys.argv:
     for q in questions:

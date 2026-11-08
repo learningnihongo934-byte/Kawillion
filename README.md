@@ -1,27 +1,28 @@
 # Kawillion
 
-Daily anime trivia in pixel art, inspired by list-trivia games like Krillion. Each day has 7 prompts. You give one answer per prompt within 25 seconds, and rarer answers score more (Common 10 up to Legendary 100). Points carry a climber up a tower of seven pixel scenes drawn in Pixeter (src/art): Starter Village, Ninja Forest, Pirate Sea, Titan Wall, Demon Mountain, Mecha City and Sky Castle at 7,000 m. Endless mode gives a random set any time.
+A daily anime trivia game in pixel art, in the same genre as list-trivia games like Krillion. Each day has 7 anime prompts, the same for everyone, such as "Name a Naruto character". You get 25 seconds and one answer per prompt. Answers that aren't on the list are turned away, and you can try again while the clock runs.
 
-Rarity comes from list order: lists are written most famous first, and the last answer is the Legendary one.
+The rarer your answer, the more points you get (Common 10, Uncommon 30, Rare 60, Epic 85, Legendary 100). Points carry a climber up a tower of seven pixel scenes drawn in Pixeter: Starter Village, Ninja Forest, Pirate Sea, Titan Wall, Demon Mountain, Mecha City, and Sky Castle at 7,000 m.
 
-## Adding questions
+- **Clear feedback:** after each answer you see its tier, roughly what share of players said it, its rank, and the most common answers. Each prompt also has a hidden Legendary answer, and you get a hint of its first letters.
+- **Real rarity:** every answer is counted (Cloudflare D1), and rarity moves from a starting guess toward what players actually say.
+- **More:** an endless mode, streaks and stats, a shareable emoji grid, and synthesized chiptune sound.
 
-Questions live in `data/*.txt`:
+30 prompts with about 3,000 answers in total.
 
-```
-# Name a Naruto character
-@ Characters
-Naruto Uzumaki; Sasuke Uchiha | Sasuke; Gaara
-```
+## Files
 
-`;` separates answers and `|` adds extra accepted spellings.
+- `src/index.html` is the game. `src/art/` holds the Pixeter scenes and the hero sprite.
+- `src/worker.js` serves the game and the answer API (`GET /api/stats`, `POST /api/answer`). `schema.sql` is its table.
+- `data/*.txt` holds the questions. `;` separates answers, `|` adds extra spellings, `* Name` marks the Legendary gem, and `+ Question` adds answers to an existing question. Lists are written most famous first, because that order is the starting guess at rarity.
+- `tools/compile.py` builds `dist/questions.js`. `tools/check.py` flags duplicate answers.
 
 ## Build and run
 
 ```bash
 ./build.sh          # writes dist/
-./build.sh serve    # serves at http://localhost:8830
-./build.sh deploy   # publishes to https://kawillion.rennko.tech
+./build.sh serve    # serves at http://localhost:8830 (the API isn't available there)
+./build.sh deploy   # creates the D1 table if needed, then publishes to https://kawillion.rennko.tech
 ```
 
 Made by **Virat Reddy Kaukuntla** ([@learningnihongo934-byte](https://github.com/learningnihongo934-byte))

@@ -1,8 +1,10 @@
 {
-  // Kawillion: static assets only, served from dist/ (./build.sh deploy)
+  // Kawillion: static game in dist/ plus a small answer-count API (src/worker.js, D1)
   "name": "kawillion",
+  "main": "src/worker.js",
   "compatibility_date": "2025-10-01",
-  "assets": { "directory": "dist" },
+  "assets": { "directory": "dist", "binding": "ASSETS" },
+  "d1_databases": [{ "binding": "DB", "database_name": "kawillion", "database_id": "95ced619-9f72-4ecc-9b71-bcf1edc2caab" }],
   // more specific than Rennko Cloud's *.rennko.tech/* route, so this host stays here
   "routes": [{ "pattern": "kawillion.rennko.tech", "custom_domain": true }, { "pattern": "kawillion.rennko.tech/*", "zone_name": "rennko.tech" }],
   "workers_dev": true

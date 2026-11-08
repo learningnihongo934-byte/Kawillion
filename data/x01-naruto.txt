@@ -1,0 +1,16 @@
++ Name a Naruto character
+Sarada Uchiha | Sarada; Mitsuki; Himawari Uzumaki | Himawari; Kawaki; Shikadai Nara | Shikadai; Inojin Yamanaka | Inojin; Chocho Akimichi | Chocho; Metal Lee; Akamaru; Pakkun
+Gamabunta; Gamakichi; Manda; Katsuyu; Shizune; Tonton; Anko Mitarashi | Anko; Ibiki Morino | Ibiki; Genma Shiranui | Genma; Raido Namiashi
+Aoba Yamashiro; Hayate Gekko; Yugao Uzuki; Kotetsu Hagane | Kotetsu; Izumo Kamizuki | Izumo; Ebisu; Udon; Moegi; Teuchi; Ayame
+Tazuna; Inari; Gato; Kimimaro; Tayuya; Sakon; Ukon; Jirobo; Kidomaru; Dosu Kinuta | Dosu
+Zaku Abumi | Zaku; Kin Tsuchi; Misumi Tsurugi; Yoroi Akado; Baki; Rasa | Fourth Kazekage; Chiyo; Ebizo; Yashamaru; Karura
+Matsuri; Mei Terumi | Mei; Chojuro; Ao; Onoki | Third Tsuchikage; Kurotsuchi; Akatsuchi; A | Raikage | Fourth Raikage; Darui; Cee
+Samui; Karui; Omoi; Mabui; Yugito Nii | Yugito; Yagura; Roshi; Han; Utakata; Fu
+Mifune; Suigetsu Hozuki | Suigetsu; Karin Uzumaki | Karin; Jugo; Mangetsu Hozuki | Mangetsu; Kushimaru Kuriarare; Jinpachi Munashi; Jinin Akebino; Ameyuri Ringo; Fuguki Suikazan
+Raiga Kurosuki | Raiga; Hiashi Hyuga | Hiashi; Hizashi Hyuga | Hizashi; Hanabi Hyuga | Hanabi; Ko Hyuga; Toneri Otsutsuki | Toneri; Isshiki Otsutsuki | Isshiki; Momoshiki Otsutsuki | Momoshiki; Kinshiki Otsutsuki | Kinshiki; Urashiki Otsutsuki | Urashiki
+Hagoromo Otsutsuki | Hagoromo | Sage of Six Paths; Hamura Otsutsuki | Hamura; Indra Otsutsuki | Indra; Asura Otsutsuki | Asura; Black Zetsu; White Zetsu; Tobi; Fugaku Uchiha | Fugaku; Mikoto Uchiha | Mikoto; Shisui Uchiha | Shisui
+Izuna Uchiha | Izuna; Kagami Uchiha; Sakumo Hatake | Sakumo; Rin Nohara | Rin; Dan Kato; Nawaki; Yahiko; Shikaku Nara | Shikaku; Inoichi Yamanaka | Inoichi; Choza Akimichi | Choza
+Tsume Inuzuka | Tsume; Hana Inuzuka; Shibi Aburame; Torune Aburame | Torune; Fu Yamanaka; Homura Mitokado | Homura; Koharu Utatane | Koharu; Mito Uzumaki | Mito; Mirai Sarutobi | Mirai; Mu | Second Tsuchikage
+Gengetsu Hozuki | Second Mizukage; Shukaku | One-Tails; Matatabi | Two-Tails; Isobu | Three-Tails; Son Goku | Four-Tails; Kokuo | Five-Tails; Saiken | Six-Tails; Chomei | Seven-Tails; Gyuki | Eight-Tails; Ten-Tails | Juubi
+Kagura Karatachi | Kagura; Denki Kaminarimon; Iwabee Yuino | Iwabee; Sumire Kakei | Sumire; Wasabi Izuno; Namida Suzumeno; Shinki; Kashin Koji; Amado; Code
+Eida; Daemon; Jigen; Deepa; Boro; Delta; Guren; Bull; Hiruko

@@ -4,78 +4,253 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kawillion</title>
-<meta name="description" content="Daily anime trivia. Seven prompts, one answer each. Rarer answers carry you further across a pixel anime world.">
+<meta name="description" content="Daily anime trivia. Seven prompts, one answer each. The rarer your answer, the higher you climb.">
+<link rel="icon" href="art/hero.png">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#1a1630;--panel:#2a2448;--edge:#0d0b1a;--ink:#f4efff;--mute:#a9a0c8;--pink:#ff5c9d;--gold:#ffd23f;--good:#4ce08a;--bad:#ff5a5a;
-  --t0:#b8b8c8;--t1:#4ce08a;--t2:#4cb6ff;--t3:#c070ff;--t4:#ffd23f}
+:root{--ink:#f6f0ff;--mute:#b9b0d6;--pink:#ff5c9d;--gold:#ffd23f;--cyan:#2ce8f5;--bad:#ff4d5e;--panel:rgba(18,13,36,.86);--edge:#0b0818}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"VT323",monospace;font-size:22px;min-height:100vh;image-rendering:pixelated}
-main{max-width:760px;margin:0 auto;padding:16px 16px 48px}
-h1,.px{font-family:"Press Start 2P",monospace}
-h1{font-size:26px;margin:10px 0 4px;color:var(--pink);text-shadow:3px 3px 0 var(--edge)}
-.sub{color:var(--mute);margin:0 0 14px;line-height:1.1}
-.box{background:var(--panel);border:4px solid var(--edge);box-shadow:inset -4px -4px 0 #00000055,inset 4px 4px 0 #ffffff14;padding:14px;margin:12px 0}
-button{font-family:"Press Start 2P",monospace;font-size:12px;cursor:pointer;border:4px solid var(--edge);background:#4a4170;color:var(--ink);padding:12px 14px;box-shadow:inset -3px -3px 0 #00000066,inset 3px 3px 0 #ffffff22}
-button.go{background:var(--pink)}
-button:active{transform:translate(2px,2px)}
-button:disabled{opacity:.5;cursor:default}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-canvas#world{width:100%;max-width:480px;margin:0 auto;aspect-ratio:160/128;display:block;border:4px solid var(--edge);image-rendering:pixelated;background:#000}
-.hud{max-width:480px;margin-left:auto!important;margin-right:auto!important;display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;font-size:24px}
-.prompt{font-family:"Press Start 2P",monospace;font-size:15px;line-height:1.6;margin:6px 0 12px}
-.timebar{height:14px;border:3px solid var(--edge);background:#111;margin-bottom:12px}
-.timebar i{display:block;height:100%;background:var(--gold);width:100%}
-#guess{width:100%;font:inherit;font-size:28px;padding:8px 12px;background:#111;color:var(--ink);border:4px solid var(--edge);outline:none}
-#guess:focus{border-color:var(--pink)}
-#guess.shake{animation:shake .3s;border-color:var(--bad)}
-@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.tier{font-family:"Press Start 2P",monospace;font-size:13px;padding:6px 8px;border:3px solid var(--edge);display:inline-block;color:#111}
-.reveal{min-height:90px}
-.reveal .big{font-family:"Press Start 2P",monospace;font-size:18px;margin:8px 0}
-.list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.list span{border:2px solid var(--edge);padding:1px 8px;background:#00000033}
-.dots{font-family:"Press Start 2P",monospace;font-size:14px;letter-spacing:4px}
+html,body{margin:0;height:100%;overflow:hidden;background:#0b0818;color:var(--ink);font-family:"VT323",monospace;font-size:22px;-webkit-font-smoothing:none}
+#stage,#overlay{position:fixed;inset:0;width:100%;height:100%;display:block}
+#stage{image-rendering:pixelated;image-rendering:crisp-edges}
+#overlay{pointer-events:none;z-index:1}
+.fx{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 50%,rgba(5,3,14,.55))}
+.fx::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.03) 0 1px,transparent 1px 3px)}
+#flash{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0}
+#flash.go{animation:flash .6s ease-out}
+@keyframes flash{0%{opacity:.4}100%{opacity:0}}
+.shake{animation:shake .45s}
+@keyframes shake{10%,50%,90%{transform:translate(-4px,2px)}30%,70%{transform:translate(4px,-2px)}}
+.ui{position:fixed;z-index:2}
 .hidden{display:none!important}
-footer{color:var(--mute);text-align:center;margin-top:30px}
+.px{font-family:"Press Start 2P",monospace}
+.panel{background:var(--panel);border:2px solid rgba(255,255,255,.16);box-shadow:0 0 0 3px var(--edge),0 12px 40px rgba(0,0,0,.45)}
+.mute{color:var(--mute)}
+small{font-size:17px;color:var(--mute)}
+.btn{font-family:"Press Start 2P",monospace;font-size:10px;letter-spacing:1px;color:var(--ink);background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.28);padding:11px 13px;cursor:pointer;box-shadow:0 0 0 2px var(--edge)}
+.btn:hover{background:rgba(255,255,255,.14);border-color:#fff}
+.btn:active{transform:translateY(2px)}
+.btn.go{background:var(--pink);border-color:#ffc2da;color:#fff;box-shadow:0 0 0 2px var(--edge),0 4px 0 2px #8a1d4a}
+.btn.go:hover{filter:brightness(1.1)}
+.btn.big{font-size:14px;padding:18px;width:100%;letter-spacing:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+
+/* title */
+#title{left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:max(9vh,64px) 16px max(20px,env(safe-area-inset-bottom));pointer-events:none}
+#title>*{pointer-events:auto}
+.logo{font-family:"Press Start 2P",monospace;font-size:clamp(26px,7.4vw,68px);margin:0;letter-spacing:2px;display:flex;justify-content:center;filter:drop-shadow(3px 3px 0 #8a1d4a) drop-shadow(3px 3px 0 #0b0818)}
+.logo span{display:inline-block;background:linear-gradient(#ffe36e,#ff8fb8 55%,#ff5c9d);-webkit-background-clip:text;background-clip:text;color:transparent;animation:hop 3s ease-in-out infinite}
+@keyframes hop{0%,20%,100%{transform:translateY(0)}10%{transform:translateY(-8px)}}
+.subtitle{font-family:"Press Start 2P",monospace;font-size:clamp(9px,1.6vw,13px);color:var(--cyan);letter-spacing:6px;text-align:center;margin-top:14px;text-shadow:2px 0 var(--edge),-2px 0 var(--edge),0 2px var(--edge),0 -2px var(--edge),2px 2px var(--edge)}
+.tag{display:table;margin:12px auto 0;text-align:center;font-size:clamp(18px,2.4vw,24px);padding:2px 10px;background:rgba(11,8,24,.6)}
+.start{width:min(520px,100%);padding:16px;display:flex;flex-direction:column;gap:10px}
+.start .meta{display:flex;justify-content:space-between;font-size:18px;color:var(--mute)}
+.start .meta b{font-family:"Press Start 2P",monospace;font-size:9px;color:var(--pink);letter-spacing:2px}
+#status{text-align:center;font-size:19px;min-height:22px}
+
+/* hud */
+#hud{top:10px;left:10px;right:56px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.gauge{padding:6px 10px;min-width:96px}
+.gauge b{display:block;font-family:"Press Start 2P",monospace;font-size:7px;color:var(--mute);letter-spacing:2px}
+.gauge span{font-size:clamp(22px,3.4vw,30px);line-height:1;color:var(--cyan)}
+#scoreG span{color:var(--gold)}
+.pipwrap{text-align:center;padding-top:6px}
+#pips{display:flex;gap:4px;justify-content:center}
+#pips i{width:13px;height:13px;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.4)}
+#pips i.now{border-color:#fff;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{border-color:rgba(255,255,255,.2)}}
+#pipLabel{font-family:"Press Start 2P",monospace;font-size:7px;color:var(--mute);margin-top:5px;letter-spacing:1px}
+#icons{top:10px;right:10px;display:flex;flex-direction:column;gap:6px}
+.icon{width:38px;height:34px;padding:0;font-size:15px;font-family:inherit;display:grid;place-items:center}
+body.on-title #homeBtn,body.on-title #statsIcon{display:none}
+
+/* prompt */
+#card{left:50%;top:max(92px,15vh);transform:translateX(-50%);width:min(640px,calc(100% - 24px));padding:16px 20px;text-align:center}
+.kicker{font-family:"Press Start 2P",monospace;font-size:9px;color:var(--pink);letter-spacing:2px}
+#cardQ{font-family:"Press Start 2P",monospace;font-size:clamp(14px,2.3vw,21px);line-height:1.6;margin:12px 0 8px}
+#dock{left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(640px,calc(100% - 24px));display:flex;gap:10px;align-items:center;padding:10px}
+#err{position:absolute;left:0;right:0;bottom:calc(100% + 10px);text-align:center;color:var(--bad);font-size:21px;text-shadow:0 2px 0 #000,0 0 8px #000}
+#ring{width:56px;height:56px;flex:none;position:relative}
+#ring svg{transform:rotate(-90deg);display:block}
+#ringNum{position:absolute;inset:0;display:grid;place-items:center;font-family:"Press Start 2P",monospace;font-size:13px}
+#ring.danger #ringNum{color:var(--bad);animation:blink .5s steps(2) infinite}
+#ring.danger #ringArc{stroke:var(--bad)}
+#guess{flex:1;min-width:0;font:inherit;font-size:26px;background:rgba(0,0,0,.45);color:var(--ink);border:2px solid rgba(255,255,255,.2);padding:8px 12px;outline:none;border-radius:0}
+#guess:focus{border-color:var(--cyan)}
+.jolt{animation:jolt .3s}
+@keyframes jolt{25%{margin-left:-8px}75%{margin-left:8px}}
+
+/* reveal */
+#reveal{left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(600px,calc(100% - 24px));padding:16px 18px;max-height:64vh;overflow:auto;text-align:center}
+#rvTier{font-family:"Press Start 2P",monospace;font-size:clamp(24px,5.6vw,42px);letter-spacing:3px;margin:4px 0 10px}
+#rvTier.pop{animation:pop .55s cubic-bezier(.2,1.7,.4,1)}
+#rvTier.legend{animation:pop .55s cubic-bezier(.2,1.7,.4,1),shimmer 1.2s linear .55s infinite}
+@keyframes pop{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shimmer{50%{filter:brightness(1.5)}}
+#rvAnswer{font-size:30px;line-height:1.1}
+#rvPts{font-family:"Press Start 2P",monospace;font-size:11px;color:var(--gold);margin:10px 0 4px;letter-spacing:1px}
+#rvLine{font-size:20px;color:var(--mute)}
+.meter{position:relative;display:flex;gap:3px;margin:16px 4px 4px;height:12px}
+.meter div{flex:1;opacity:.28}
+.meter div.on{opacity:1;box-shadow:0 0 10px currentColor}
+#rvMark{position:absolute;top:-9px;width:0;height:0;border:6px solid transparent;border-top:8px solid #fff;transform:translateX(-6px);transition:left .6s cubic-bezier(.2,1.4,.4,1)}
+.mlabels{display:flex;font-family:"Press Start 2P",monospace;font-size:6px;color:var(--mute);margin:0 4px}
+.mlabels span{flex:1;text-align:center}
+#rvStat{font-size:20px;margin-top:10px;line-height:1.15}
+.board{margin:12px 0 4px;text-align:left}
+.bhead{font-family:"Press Start 2P",monospace;font-size:8px;color:var(--mute);letter-spacing:2px;margin-bottom:6px}
+.brow{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr 50px;gap:8px;align-items:center;font-size:19px;padding:1px 4px}
+.brow.me{background:rgba(255,255,255,.1);outline:1px solid rgba(255,255,255,.3)}
+.bn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb{height:9px;background:rgba(255,255,255,.08)}
+.bb i{display:block;height:100%}
+.bp{text-align:right;color:var(--mute)}
+#rvGem{font-size:19px;color:var(--gold);margin-top:8px;letter-spacing:1px}
+#rvNext{margin-top:12px}
+
+/* banner */
+#banner{left:0;right:0;top:24vh;text-align:center;pointer-events:none}
+#banner.show{animation:banner 2.8s ease forwards}
+@keyframes banner{0%{opacity:0;transform:translateY(10px)}12%,78%{opacity:1;transform:none}100%{opacity:0}}
+#bannerT{font-family:"Press Start 2P",monospace;font-size:clamp(16px,3.4vw,28px);color:#fff;text-shadow:3px 3px 0 var(--edge),0 0 20px rgba(255,92,157,.7);letter-spacing:3px}
+#bannerS{font-size:22px;color:var(--cyan);text-shadow:0 2px 0 var(--edge);margin-top:8px}
+
+/* summary */
+#summary{left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,calc(100% - 24px));max-height:84vh;overflow:auto;padding:18px;text-align:center}
+#smAlt{font-family:"Press Start 2P",monospace;font-size:clamp(26px,6vw,40px);color:var(--gold);margin:12px 0 6px;text-shadow:3px 3px 0 var(--edge)}
+#smGrid{font-size:30px;letter-spacing:3px;margin:8px 0}
+.srow{display:grid;grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:center;text-align:left;font-size:19px;padding:4px 0;border-top:1px solid rgba(255,255,255,.08)}
+.srow .st{color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow .sa{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{font-family:"Press Start 2P",monospace;font-size:7px;padding:4px 5px;color:#0b0818;white-space:nowrap}
+
+/* modal */
+#modal{inset:0;background:rgba(5,3,14,.6);display:grid;place-items:center;padding:16px;z-index:3}
+#modal .panel{width:min(520px,100%);max-height:86vh;overflow:auto;padding:18px}
+#modal h3{font-family:"Press Start 2P",monospace;font-size:13px;color:var(--pink);margin:0 0 12px;letter-spacing:2px}
+#modal p{margin:6px 0;line-height:1.15}
+.trow{display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid rgba(255,255,255,.08)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:12px}
+.stats b{display:block;font-family:"Press Start 2P",monospace;font-size:16px;color:var(--gold);margin-bottom:4px}
+.stats span{font-size:16px;color:var(--mute)}
+@media (max-width:520px){.gauge{min-width:78px;padding:5px 7px}#pips i{width:10px;height:10px}.brow{grid-template-columns:minmax(0,1.4fr) .8fr 44px}}
 </style>
 </head>
 <body>
-<main>
-  <h1>KAWILLION</h1>
-  <p class="sub">Seven anime prompts a day. Give one answer to each. Common answers move you a little, rare ones carry you higher up the tower.</p>
-  <canvas id="world" width="160" height="128"></canvas>
-  <div class="hud"><span id="where">Starter Village</span><span id="dist">0 m</span></div>
+<canvas id="stage"></canvas>
+<canvas id="overlay"></canvas>
+<div class="fx"></div>
+<div id="flash"></div>
 
-  <section id="home" class="box">
-    <div class="px" style="font-size:12px;margin-bottom:10px" id="dayLabel"></div>
-    <p id="homeText" class="sub"></p>
-    <div class="row"><button class="go" id="daily">Start journey</button><button id="endless">Endless mode</button></div>
-    <p class="sub" style="margin-top:12px">Tiers: <span style="color:var(--t0)">Common 10</span> · <span style="color:var(--t1)">Uncommon 30</span> · <span style="color:var(--t2)">Rare 60</span> · <span style="color:var(--t3)">Epic 85</span> · <span style="color:var(--t4)">Legendary 100</span></p>
-  </section>
+<section id="title" class="ui">
+  <div>
+    <h1 class="logo" id="logo"></h1>
+    <div class="subtitle">THE DAILY ANIME CLIMB</div>
+    <div class="tag">Seven prompts. One answer each. The rarer your pick, the higher you climb.</div>
+  </div>
+  <div class="start panel">
+    <div class="meta"><b id="dayLabel">DAY #1</b><span id="streak"></span></div>
+    <button class="btn go big" id="begin">▲ BEGIN CLIMB ▲</button>
+    <div class="row"><button class="btn" id="endless">ENDLESS</button><button class="btn" id="howBtn">HOW TO PLAY</button><button class="btn" id="statsBtn">STATS</button></div>
+    <div id="status"></div>
+  </div>
+</section>
 
-  <section id="play" class="box hidden">
-    <div class="row" style="justify-content:space-between"><span class="dots" id="dots"></span><span class="px" style="font-size:14px" id="clock">25</span></div>
-    <div class="prompt" id="prompt"></div>
-    <div class="timebar"><i id="bar"></i></div>
-    <input id="guess" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="One answer, then Enter">
-    <div class="reveal" id="reveal"></div>
-    <button class="go hidden" id="next">Next</button>
-  </section>
+<div id="hud" class="ui hidden">
+  <div class="gauge panel"><b>ALTITUDE</b><span id="altV">0 m</span></div>
+  <div class="pipwrap"><div id="pips"></div><div id="pipLabel"></div></div>
+  <div class="gauge panel" id="scoreG"><b>SCORE</b><span id="scoreV">0</span></div>
+</div>
+<div id="icons" class="ui">
+  <button class="btn icon" id="soundBtn" title="Sound">♪</button>
+  <button class="btn icon" id="homeBtn" title="Home">⌂</button>
+  <button class="btn icon" id="statsIcon" title="Stats">▤</button>
+  <button class="btn icon" id="helpIcon" title="How to play">?</button>
+</div>
 
-  <section id="done" class="box hidden"></section>
-  <footer>Made by Virat Reddy Kaukuntla</footer>
-</main>
+<section id="card" class="ui panel hidden">
+  <div class="kicker" id="cardK"></div>
+  <div id="cardQ"></div>
+  <div class="mute" id="cardHint"></div>
+</section>
+
+<div id="dock" class="ui panel hidden">
+  <div id="err"></div>
+  <div id="ring"><svg width="56" height="56"><circle cx="28" cy="28" r="23" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5"/><circle id="ringArc" cx="28" cy="28" r="23" fill="none" stroke="#2ce8f5" stroke-width="5" stroke-dasharray="144.5" stroke-dashoffset="0"/></svg><span id="ringNum">25</span></div>
+  <input id="guess" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type one answer…" maxlength="60">
+  <button class="btn go" id="climbBtn">CLIMB</button>
+</div>
+
+<section id="reveal" class="ui panel hidden">
+  <div id="rvTier"></div>
+  <div id="rvAnswer"></div>
+  <div id="rvPts"></div>
+  <div id="rvLine"></div>
+  <div id="rvMeter">
+    <div class="meter" id="meter"></div>
+    <div class="mlabels"><span>COMMON</span><span>UNCOMMON</span><span>RARE</span><span>EPIC</span><span>LEGEND</span></div>
+  </div>
+  <div id="rvStat"></div>
+  <div class="board" id="rvBoard"></div>
+  <div id="rvGem"></div>
+  <button class="btn go big hidden" id="rvNext"></button>
+</section>
+
+<div id="banner" class="ui hidden"><div id="bannerT"></div><div id="bannerS"></div></div>
+
+<section id="summary" class="ui panel hidden">
+  <div class="kicker" id="smHead"></div>
+  <div id="smAlt"></div>
+  <div id="smWhere" class="mute"></div>
+  <div id="smGrid"></div>
+  <div id="smRows"></div>
+  <div class="row" style="margin-top:14px"><button class="btn go" id="smShare">COPY RESULT</button><button class="btn" id="smEndless">ENDLESS</button><button class="btn" id="smHome">HOME</button></div>
+  <div id="smNext" class="mute" style="margin-top:10px"></div>
+</section>
+
+<div id="modal" class="ui hidden"><div class="panel" id="modalBody"></div></div>
+
 <script src="questions.js"></script>
 <script>
 const Q = window.QUESTIONS, $ = id => document.getElementById(id);
-const ROUNDS = 7, SECONDS = 25, MAX = ROUNDS * 100;
-const TIERS = [["Common", 10, "--t0"], ["Uncommon", 30, "--t1"], ["Rare", 60, "--t2"], ["Epic", 85, "--t3"], ["Legendary", 100, "--t4"]];
-const REGIONS = ["Starter Village", "Ninja Forest", "Pirate Sea", "Titan Wall", "Demon Mountain", "Mecha City", "Sky Castle"];
+const ROUNDS = 7, SECONDS = 25, MAXPTS = ROUNDS * 100, MAXALT = MAXPTS * 10;
+const TIERS = [
+  { name: "COMMON", pts: 10, col: "#c0cbdc", emoji: "⬜", lines: ["Everyone's first thought.", "Main character energy. Everyone had it.", "The answer the whole class shouted."] },
+  { name: "UNCOMMON", pts: 30, col: "#63e07a", emoji: "🟩", lines: ["A solid pick.", "Side-character knowledge. Respect.", "You've watched more than the openings."] },
+  { name: "RARE", pts: 60, col: "#3cb8ff", emoji: "🟦", lines: ["Not many climbers said that.", "Filler-arc enjoyer detected.", "Deep in the wiki, aren't you?"] },
+  { name: "EPIC", pts: 85, col: "#c46bff", emoji: "🟪", lines: ["A true fan answer.", "You read the manga, didn't you?", "Hardly anyone climbs that way."] },
+  { name: "LEGENDARY", pts: 100, col: "#ffd23f", emoji: "🟨", lines: ["The hidden gem of this prompt!", "Your power level just spiked.", "Sensei would be proud."] },
+];
+const REGIONS = [
+  ["STARTER VILLAGE", "Where every journey begins."], ["NINJA FOREST", "Something rustles in the leaves."],
+  ["PIRATE SEA", "Salt air and treasure maps."], ["TITAN WALL", "Don't look up. Okay, look up."],
+  ["DEMON MOUNTAIN", "The moon is watching."], ["MECHA CITY", "The neon hums all night."], ["SKY CASTLE", "The summit above the clouds."]];
 const store = {
   get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} }
 };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const fmtM = alt => (Math.round(alt / 10) * 10).toLocaleString() + " m";
+const show = (id, on) => $(id).classList.toggle("hidden", !on);
+const pickLine = a => a[Math.floor(Math.random() * a.length)];
+
+/* ---------- days ---------- */
+const now = new Date(), localKey = d => d.toLocaleDateString("en-CA");
+const dayKey = localKey(now), yesterKey = localKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
+const dayNum = Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - new Date(2026, 10, 1)) / 864e5) + 1;
+function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 2 ** 32; }; }
+function shuffled(rand) { const ids = Q.map((_, i) => i); for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; } return ids; }
+// one fixed order, walked 7 at a time, so a prompt only repeats once every question has had its turn
+const ORDER = shuffled(rng(20261101));
+const dailySet = () => Array.from({ length: ROUNDS }, (_, k) => Q[ORDER[(((dayNum - 1) * ROUNDS + k) % Q.length + Q.length) % Q.length]]);
+const endlessSet = () => shuffled(Math.random).slice(0, ROUNDS).map(i => Q[i]);
+function untilMidnight() {
+  const m = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) - new Date();
+  if (m <= 0) return "now (refresh!)";
+  const s = Math.floor(m / 1000);
+  return [s / 3600, (s % 3600) / 60, s % 60].map(v => String(Math.floor(v)).padStart(2, "0")).join(":");
+}
+setInterval(() => document.querySelectorAll(".nextIn").forEach(e => e.textContent = untilMidnight()), 1000);
 
 /* ---------- matching ---------- */
 function norm(s) {
@@ -107,7 +282,7 @@ function buildKeys(q) {
   });
 }
 function match(q, guess) {
-  const g = squash(guess); if (g.length < 2) return -1;
+  const g = squash(guess); if (!g) return -1;
   const keys = q._keys ||= buildKeys(q);
   let best = -1, bestD = 9;
   keys.forEach((ks, i) => ks.forEach(k => {
@@ -117,138 +292,488 @@ function match(q, guess) {
   }));
   return best;
 }
-// Lists are written roughly most-famous first, so position sets rarity; the last answer is the Legendary gem.
-function tierOf(q, i) {
-  const n = q.a.length;
-  if (i === n - 1) return 4;
-  const f = i / n;
-  return f < 0.3 ? 0 : f < 0.55 ? 1 : f < 0.8 ? 2 : 3;
+
+/* ---------- rarity ----------
+   Lists are written most famous first, which gives each answer a starting guess at how often players
+   say it. Real answer counts from /api/stats pull that guess toward what players actually say.
+   The last answer on each list is that prompt's Legendary gem. */
+let STATS = {};
+fetch("/api/stats").then(r => r.ok ? r.json() : {}).then(s => STATS = s || {}).catch(() => {});
+// The starting guess falls off steeply (players pile onto the famous answers), so tiers land on
+// roughly the same ranks for a 40-answer list and a 200-answer list: Common is about the top 3,
+// Uncommon the next 3, Rare down to about #17, Epic below that.
+const PRIOR_WEIGHT = 40, FALLOFF = 1.3;
+function popularity(q) {
+  const n = q.a.length, c = STATS[q.q] || {}, w = q.a.map((_, i) => (i + 1) ** -FALLOFF);
+  let H = 0, N = 0;
+  for (let i = 0; i < n; i++) { H += w[i]; N += c[i] || 0; }
+  return { p: w.map((x, i) => (PRIOR_WEIGHT * x / H + (c[i] || 0)) / (PRIOR_WEIGHT + N)), N };
+}
+const CUTS = [0.06, 0.025, 0.008];
+function tierOf(q, i, p) {
+  if (i === q.a.length - 1) return 4;
+  return p[i] >= CUTS[0] ? 0 : p[i] >= CUTS[1] ? 1 : p[i] >= CUTS[2] ? 2 : 3;
+}
+// where an answer sits on the 5-part rarity meter (0 = most common, 1 = rarest)
+function meterPos(tier, x) {
+  if (tier === 4) return 0.9;
+  const [hi, lo] = [[0.5, CUTS[0]], [CUTS[0], CUTS[1]], [CUTS[1], CUTS[2]], [CUTS[2], 0.0008]][tier];
+  const f = Math.min(1, Math.max(0, (Math.log(hi) - Math.log(x)) / (Math.log(hi) - Math.log(lo))));
+  return (tier + 0.12 + f * 0.76) / 5;
+}
+const pct = x => x >= 0.1 ? Math.round(x * 100) + "%" : x >= 0.01 ? (x * 100).toFixed(1).replace(/\.0$/, "") + "%" : "<1%";
+const mask = s => [...s].map((c, k) => k === 0 || !/[a-z0-9]/i.test(c) || s[k - 1] === " " ? c : "_").join("");
+function sendAnswer(q, i) {
+  fetch("/api/answer", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ q, i }), keepalive: true }).catch(() => {});
+  const c = STATS[q] ||= {}; c[i] = (c[i] || 0) + 1;
 }
 
-/* ---------- daily set ---------- */
-const today = new Date(), dayKey = today.toISOString().slice(0, 10);
-const dayNum = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(2026, 10, 1)) / 864e5) + 1;
-function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 2 ** 32; }; }
-function pick(rand) {
-  const ids = Q.map(q => q.id);
-  for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; }
-  return ids.slice(0, ROUNDS).map(i => Q[i]);
-}
-
-/* ---------- pixel world: scenes drawn in Pixeter (src/art), stacked bottom to top ---------- */
-const cv = $("world"), cx = cv.getContext("2d"), SH = 128, H = REGIONS.length * SH;
-const scenes = REGIONS.map((_, i) => Object.assign(new Image(), { src: `art/s${i}.png` }));
-const hero = Object.assign(new Image(), { src: "art/hero.png" });
-const BOTTOM = H - 26, TOP = 14;          // hero's y at 0 points and at a perfect run
-let heroY = BOTTOM, targetY = BOTTOM;
-function render() {
-  const moving = Math.abs(targetY - heroY) > 0.5;
-  heroY = moving ? heroY + (targetY - heroY) * 0.05 : targetY;
-  const cam = Math.max(0, Math.min(H - SH, heroY - 70));
-  cx.imageSmoothingEnabled = false;
-  cx.clearRect(0, 0, 160, SH);
-  scenes.forEach((img, i) => {   // scene 0 sits at the bottom of the tower
-    const y = H - (i + 1) * SH - cam;
-    if (img.complete && y > -SH && y < SH) cx.drawImage(img, 0, Math.round(y));
-  });
-  if (hero.complete) {
-    const flip = moving && Math.floor(performance.now() / 160) % 2;
-    cx.save(); cx.translate(72 + (flip ? 16 : 0), Math.round(heroY - cam)); cx.scale(flip ? -1 : 1, 1);
-    cx.drawImage(hero, 0, 0); cx.restore();
+/* ---------- sound (all synthesized) ---------- */
+const sfx = (() => {
+  let ac = null, muted = store.get("kaw.muted", false);
+  const ctx = () => ac ||= new (window.AudioContext || window.webkitAudioContext)();
+  function note(f, at, dur, type = "square", vol = 0.05, to) {
+    if (muted) return;
+    try {
+      const a = ctx(), o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime + at;
+      o.type = type; o.frequency.setValueAtTime(f, t0); if (to) o.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+      g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+    } catch {}
   }
-  requestAnimationFrame(render);
+  const S = [523, 587, 659, 784, 880, 1047, 1175, 1319, 1568, 1760, 2093];
+  return {
+    unlock() { try { ctx().resume(); } catch {} },
+    get muted() { return muted; },
+    toggle() { muted = !muted; store.set("kaw.muted", muted); return muted; },
+    key() { note(1400 + Math.random() * 300, 0, 0.015, "square", 0.012); },
+    click() { note(880, 0, 0.05, "square", 0.03); },
+    wrong() { note(200, 0, 0.16, "square", 0.05, 100); note(150, 0.08, 0.2, "square", 0.04, 70); },
+    tick() { note(1250, 0, 0.04, "square", 0.03); },
+    step() { note(260 + Math.random() * 90, 0, 0.035, "triangle", 0.035); },
+    miss() { note(392, 0, 0.18, "triangle", 0.05, 196); note(262, 0.18, 0.3, "triangle", 0.05, 131); },
+    region() { note(784, 0, 0.12, "triangle", 0.05); note(1175, 0.12, 0.3, "triangle", 0.05); },
+    tier(t) {
+      for (let k = 0; k <= t + 1; k++) note(S[k + t], k * 0.07, 0.16, "square", 0.045);
+      if (t >= 2) note(S[t + 3] / 2, 0, 0.5, "triangle", 0.05);
+      if (t === 4) for (let k = 0; k < 8; k++) note(2400 + k * 260, 0.45 + k * 0.045, 0.08, "sine", 0.03);
+    },
+    done() { [523, 659, 784, 1047].forEach((f, k) => note(f, k * 0.1, 0.2, "square", 0.04)); },
+    fanfare() { [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, k) => note(f, k * 0.13, k === 6 ? 0.7 : 0.2, "square", 0.05)); },
+  };
+})();
+
+/* ---------- stage: 7 Pixeter scenes (src/art) stacked into one tower ---------- */
+const cv = $("stage"), cx = cv.getContext("2d"), ov = $("overlay"), oc = ov.getContext("2d");
+const SW = 160, SH = 128, NS = REGIONS.length, WH = NS * SH;
+const scenes = REGIONS.map((_, i) => Object.assign(new Image(), { src: `art/s${i}.png` }));
+const heroImg = Object.assign(new Image(), { src: "art/hero.png" });
+let VW = SW, VH = 120, sy = 1;
+function resize() {
+  const w = innerWidth, h = innerHeight, k = Math.min(w / SW, h / 118);
+  VW = Math.ceil(w / k); VH = Math.ceil(h / k); cv.width = VW; cv.height = VH;
+  const d = Math.min(2, devicePixelRatio || 1); ov.width = w * d; ov.height = h * d; oc.setTransform(d, 0, 0, d, 0, 0);
+  sy = h / VH;
 }
-function setProgress(points, instant) {
-  targetY = BOTTOM - (BOTTOM - TOP) * Math.min(points, MAX) / MAX;
-  if (instant) heroY = targetY;
-  $("where").textContent = REGIONS[Math.min(REGIONS.length - 1, Math.floor(points / MAX * REGIONS.length))];
-  $("dist").textContent = (points * 10).toLocaleString() + " m up";
+addEventListener("resize", resize); resize();
+// hero's feet: on the village stairs at 0 m, the castle door at the 7,000 m summit
+const feetY = alt => WH - 40 - alt / MAXALT * (WH - 90);
+const BELOW = 120;   // how far the camera may look under the village (soil fills it)
+const sceneTop = i => WH - (i + 1) * SH;
+let heroAlt = 0, climb = null, camY = -60, focus = 0.55, camSpeed = 0.018, fx = [], stepFrame = 0, lastRegion = 0;
+
+const rnd = k => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+function dot(x, y, c, w = 1, h = 1) { cx.fillStyle = c; cx.fillRect(Math.round(x), Math.round(y), w, h); }
+function blob(x, y, w, h, top, bot) {
+  for (let r = 0; r < h; r++) {
+    const dy = (r + 0.5) / h * 2 - 1, half = Math.round(w / 2 * Math.sqrt(1 - dy * dy));
+    dot(x + w / 2 - half, y + r, r < h * 0.55 ? top : bot, half * 2, 1);
+  }
 }
-render();
+function birds(ox, y0, t, n, c, top) {
+  for (let k = 0; k < n; k++) {
+    const gx = (rnd(k + top) * 200 + t * (0.012 + k * 0.004)) % 200 - 20, gy = top + k * 13 + Math.sin(t * 0.002 + k) * 3, up = Math.floor(t / 180 + k) % 2;
+    dot(ox + gx, y0 + gy + (up ? 0 : 1), c, 2, 1); dot(ox + gx + 2, y0 + gy + (up ? 1 : 0), c); dot(ox + gx + 3, y0 + gy + (up ? 0 : 1), c, 2, 1);
+  }
+}
+function twinkle(ox, y0, t, n, seed, h, c) {
+  for (let k = 0; k < n; k++) {
+    if (Math.sin(t * 0.004 + k * 2.3 + seed) < 0.72) continue;
+    const x = ox + rnd(k + seed) * SW, y = y0 + rnd(k + seed + 50) * h;
+    dot(x - 1, y, c, 3, 1); dot(x, y - 1, c, 1, 3);
+  }
+}
+// a little life for each scene, drawn on top of the Pixeter art
+const AMBIENT = [
+  (ox, y0, t) => { // village: falling petals, chimney smoke
+    for (let k = 0; k < 18; k++) {
+      const s = 0.6 + rnd(k) * 0.8;
+      dot(ox + (rnd(k + 3) * 180 + t * 0.008 * s + Math.sin(t * 0.002 + k) * 4) % 180 - 10, y0 + (rnd(k + 9) * SH + t * 0.012 * s) % SH, k % 3 ? "#f6757a" : "#ffffff", k % 2 + 1, 1);
+    }
+    for (let k = 0; k < 3; k++) {
+      const ph = (t / 1600 + k / 3) % 1, s = 2 + Math.round(ph * 3);
+      cx.globalAlpha = 1 - ph; dot(ox + 120 + ph * 6 + Math.sin(ph * 7) * 2, y0 + 50 - ph * 26, "#c0cbdc", s, s); cx.globalAlpha = 1;
+    }
+  },
+  (ox, y0, t) => { // forest: fireflies, drifting leaves
+    for (let k = 0; k < 16; k++) {
+      const a = Math.sin(t * 0.003 + k * 1.7); if (a < 0.2) continue;
+      const x = ox + rnd(k) * 150 + 5 + Math.sin(t * 0.0008 + k * 2) * 6, y = y0 + 50 + rnd(k + 5) * 70 + Math.cos(t * 0.001 + k) * 4;
+      cx.globalAlpha = a * 0.35; dot(x - 1, y - 1, "#fee761", 3, 3); cx.globalAlpha = 1; dot(x, y, "#fee761");
+    }
+    for (let k = 0; k < 6; k++) dot(ox + rnd(k + 30) * 160 + Math.sin(t * 0.003 + k) * 5, y0 + (rnd(k + 20) * SH + t * 0.01) % SH, "#63c74d", 2, 1);
+  },
+  (ox, y0, t) => { // sea: glints on the water, gulls
+    for (let k = 0; k < 22; k++) if (Math.sin(t * 0.004 + k * 2.3) > 0.6) dot(ox + rnd(k) * 160, y0 + 88 + rnd(k + 4) * 36, "#ffffff", 2, 1);
+    birds(ox, y0, t, 3, "#181425", 10);
+  },
+  (ox, y0, t) => { // wall: the giant blinks, dust drifts
+    if (t % 4600 < 170) { dot(ox + 62, y0 + 20, "#d77643", 12, 7); dot(ox + 86, y0 + 20, "#d77643", 12, 7); dot(ox + 62, y0 + 26, "#a22633", 12, 1); dot(ox + 86, y0 + 26, "#a22633", 12, 1); }
+    cx.globalAlpha = 0.7;
+    for (let k = 0; k < 10; k++) dot(ox + (rnd(k) * 160 + t * 0.006) % 160, y0 + ((rnd(k + 7) * SH - t * 0.004) % SH + SH) % SH, "#ead4aa");
+    cx.globalAlpha = 1;
+  },
+  (ox, y0, t) => { // demon mountain: stars, spirit lanterns, embers
+    twinkle(ox, y0, t, 12, 7, 34, "#ffffff");
+    for (const [lx, ly] of [[39, 79], [105, 23]]) { cx.globalAlpha = 0.16 + Math.sin(t * 0.006 + lx) * 0.08; dot(ox + lx - 7, y0 + ly - 7, "#2ce8f5", 14, 14); }
+    for (let k = 0; k < 10; k++) { const ph = (t / 3000 + rnd(k)) % 1; cx.globalAlpha = 1 - ph; dot(ox + rnd(k + 1) * 160 + Math.sin(ph * 9 + k) * 3, y0 + 128 - ph * 110, k % 2 ? "#ff0044" : "#f77622"); }
+    cx.globalAlpha = 1;
+  },
+  (ox, y0, t) => { // mecha city: flickering neon, drone, sky traffic
+    if (Math.sin(t * 0.013) > 0.93 || t % 5000 < 120) dot(ox + 17, y0 + 62, "#181425", 18, 8);
+    for (const [ax, ay] of [[122, 1], [24, 21]]) dot(ox + ax, y0 + ay, Math.floor(t / 600) % 2 ? "#ff0044" : "#5a6988");
+    const dx = (t * 0.02) % 220 - 30, dy = 34 + Math.sin(t * 0.003) * 3;
+    dot(ox + dx, y0 + dy, "#5a6988", 7, 2); dot(ox + dx + 1, y0 + dy - 1, "#8b9bb4", 5, 1); dot(ox + dx + 3, y0 + dy + 2, Math.floor(t / 250) % 2 ? "#2ce8f5" : "#181425");
+    for (let k = 0; k < 2; k++) {
+      const x = (t * (0.08 + k * 0.03) + k * 90) % 260 - 50, y = y0 + 46 + k * 22;
+      cx.globalAlpha = 0.5; dot(ox + x - 10, y, k ? "#ff0044" : "#fee761", 10, 1); cx.globalAlpha = 1; dot(ox + x, y, "#ffffff", 2, 1);
+    }
+  },
+  (ox, y0, t) => { // sky castle: sparkles, birds
+    twinkle(ox, y0, t, 16, 40, 110, "#fee761");
+    birds(ox, y0, t, 2, "#3e2731", 36);
+  },
+];
+// soft cloud bands hide the joins between scenes
+const SEAMS = [["#ffffff", "#c0cbdc"], ["#8b9bb4", "#5a6988"], ["#ffffff", "#c0cbdc"], ["#c0cbdc", "#8b9bb4"], ["#5a6988", "#3a4466"], ["#ffffff", "#c0cbdc"]];
+function seam(i, ox, by, t) {
+  const [top, bot] = SEAMS[i];
+  cx.globalAlpha = 0.55; dot(ox, by - 3, bot, SW, 6); cx.globalAlpha = 1;
+  for (let k = 0; k < 10; k++) {
+    const w = 24 + Math.floor(rnd(k + i * 10) * 18), h = 7 + Math.floor(rnd(k + i * 10 + 3) * 5), dir = k % 2 ? 1 : -1;
+    const x = ((rnd(k * 3 + i) * 220 + dir * t * 0.003) % 220 + 220) % 220 - 30;
+    blob(ox + x, by - h / 2 + (rnd(k + i) - 0.5) * 6, w, h, top, bot);
+  }
+}
+function drawWorld(ox, t, cam, full) {
+  cx.save(); cx.beginPath(); cx.rect(ox, 0, SW, VH); cx.clip();
+  if (-cam > 0) { dot(ox, 0, "#68386c", SW, -cam + 1); if (full) twinkle(ox, -cam - 140, t, 14, 90, 140, "#ffffff"); }
+  if (WH - cam < VH) { // soil under the village
+    const g = WH - cam;
+    dot(ox, g, "#3e8948", SW, 4); dot(ox, g + 4, "#733e39", SW, VH);
+    for (let k = 0; k < 26; k++) {
+      const x = ox + rnd(k + 70) * SW, y = g + 8 + rnd(k + 90) * BELOW;
+      if (k % 3) blob(x, y, 6 + (k % 4) * 2, 4, "#8b9bb4", "#5a6988"); else dot(x, y, "#3e2731", 10, 1);
+    }
+  }
+  for (let i = 0; i < NS; i++) {
+    const y = sceneTop(i) - cam;
+    if (y > VH || y + SH < 0) continue;
+    if (scenes[i].complete) cx.drawImage(scenes[i], ox, y);
+    if (full) AMBIENT[i](ox, y, t);
+  }
+  for (let i = 0; i < NS - 1; i++) { const by = sceneTop(i) - cam; if (by > -12 && by < VH + 12) seam(i, ox, by, t); }
+  cx.restore();
+}
+function burst(x, y, n, colors, spd = 1) {
+  for (let k = 0; k < n; k++) {
+    const a = Math.random() * Math.PI * 2, v = (0.015 + Math.random() * 0.045) * spd;
+    fx.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 0.02 * spd, life: 0, max: 600 + Math.random() * 800, c: colors[k % colors.length] });
+  }
+}
+function draw(t) {
+  const cam = Math.round(camY), ox = Math.floor((VW - SW) / 2);
+  cx.imageSmoothingEnabled = false;
+  dot(0, 0, "#0b0818", VW, VH);
+  if (ox > 0) { // blurred, dimmed copy of the world fills the space beside the tower
+    const k = VW / SW;
+    cx.save(); cx.filter = "blur(2px)";
+    cx.translate(VW / 2, VH / 2); cx.scale(k, k); cx.translate(-SW / 2, -VH / 2);
+    drawWorld(0, t, cam, false);
+    cx.restore(); cx.filter = "none";
+    cx.globalAlpha = 0.55; dot(0, 0, "#0b0818", VW, VH); cx.globalAlpha = 1;
+    dot(ox - 1, 0, "rgba(0,0,0,.5)", 1, VH); dot(ox + SW, 0, "rgba(0,0,0,.5)", 1, VH);
+  }
+  drawWorld(ox, t, cam, true);
+  const hx = ox + 72, hy = Math.round(feetY(heroAlt) - 20 - cam);
+  if (heroImg.complete) {
+    const flip = climb && Math.floor(t / 130) % 2, bob = !climb && Math.floor(t / 500) % 2;
+    cx.save(); cx.translate(hx + (flip ? 16 : 0), hy - bob); cx.scale(flip ? -1 : 1, 1); cx.drawImage(heroImg, 0, 0); cx.restore();
+  }
+  for (const p of fx) { cx.globalAlpha = Math.max(0, 1 - p.life / p.max); dot(ox + p.x, p.y - cam, p.c); }
+  cx.globalAlpha = 1;
+}
+function drawRuler() {
+  const w = innerWidth, h = innerHeight;
+  oc.clearRect(0, 0, w, h);
+  if (screen === "title") return;
+  const x = w - 14, top = 168, bot = h - 16;
+  oc.font = "16px VT323"; oc.textAlign = "right"; oc.textBaseline = "middle";
+  oc.shadowColor = "rgba(0,0,0,.9)"; oc.shadowOffsetY = 1;
+  oc.fillStyle = "rgba(255,255,255,.3)"; oc.fillRect(x, top, 1, bot - top);
+  for (let a = 0; a <= MAXALT; a += 100) {
+    const y = Math.round((feetY(a) - camY) * sy); if (y < top || y > bot) continue;
+    const major = a % 1000 === 0, mid = a % 500 === 0, len = major ? 12 : mid ? 8 : 4;
+    oc.fillStyle = major ? "rgba(255,255,255,.75)" : "rgba(255,255,255,.4)"; oc.fillRect(x - len, y, len, 1);
+    if (mid) oc.fillText(a.toLocaleString() + " m", x - 16, y);
+    if (major && a < MAXALT) { oc.fillStyle = "rgba(255,92,157,.85)"; oc.font = "14px VT323"; oc.fillText(REGIONS[a / 1000][0], x - 16, y - 14); oc.font = "16px VT323"; }
+  }
+  const best = store.get("kaw.stats", {}).best || 0;
+  if (best > 0) {
+    const y = Math.round((feetY(best * 10) - camY) * sy);
+    if (y > top && y < bot) { oc.fillStyle = "#ffd23f"; oc.fillRect(x - 22, y, 22, 2); oc.fillText("BEST", x - 26, y); }
+  }
+  const y = Math.round((feetY(heroAlt) - camY) * sy);
+  if (y > top - 10 && y < bot + 10) {
+    oc.fillStyle = "#ff5c9d"; oc.beginPath(); oc.moveTo(x - 2, y); oc.lineTo(x - 12, y - 6); oc.lineTo(x - 12, y + 6); oc.fill();
+  }
+  oc.shadowColor = "transparent";
+}
+let lastT = performance.now(), shownAlt = "";
+function frame(t) {
+  const realDt = Math.min(1000, t - lastT), dt = Math.min(50, realDt); lastT = t;
+  if (climb) {
+    const f = Math.min(1, (t - climb.t0) / climb.dur), e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
+    heroAlt = climb.from + (climb.to - climb.from) * e;
+    const fr = Math.floor(t / 130); if (fr !== stepFrame) { stepFrame = fr; sfx.step(); }
+    if (climb.tier >= 2 && Math.random() < 0.6) fx.push({ x: 74 + Math.random() * 12, y: feetY(heroAlt) - 4 - Math.random() * 14, vx: (Math.random() - 0.5) * 0.02, vy: 0.012, life: 0, max: 700, c: TIERS[climb.tier].col });
+    if (f >= 1) { const done = climb.done; heroAlt = climb.to; climb = null; burst(80, feetY(heroAlt) - 10, 12, ["#ffffff", "#fee761"], 0.8); done && done(); }
+  }
+  const region = Math.min(NS - 1, Math.floor(heroAlt / 1000 + 1e-6));
+  if (run && region > lastRegion) { lastRegion = region; banner(region); }
+  for (const p of fx) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.00004 * dt; p.life += dt; }
+  fx = fx.filter(p => p.life < p.max);
+  const target = Math.max(-40, Math.min(WH + BELOW - VH, feetY(heroAlt) - focus * VH));
+  camY += (target - camY) * (1 - Math.pow(1 - camSpeed, realDt / 16));
+  if (Math.abs(target - camY) < 1) camSpeed = 0.07;
+  const a = fmtM(heroAlt); if (a !== shownAlt) { shownAlt = a; $("altV").textContent = a; }
+  draw(t); drawRuler();
+  requestAnimationFrame(frame);
+}
 
 /* ---------- game ---------- */
-let run = null;
-function startRun(mode) {
-  const set = mode === "daily" ? pick(rng(dayNum * 7919)) : pick(Math.random);
-  run = { mode, set, i: 0, points: 0, picks: [] };
-  setProgress(0, true);
-  $("home").classList.add("hidden"); $("done").classList.add("hidden"); $("play").classList.remove("hidden");
-  nextRound();
-}
-function nextRound() {
-  const q = run.set[run.i];
-  $("prompt").textContent = q.q; $("reveal").innerHTML = ""; $("next").classList.add("hidden");
-  $("dots").textContent = run.picks.map(p => p ? "■" : "□").join("") + "▸" + "·".repeat(ROUNDS - run.i - 1);
-  const g = $("guess"); g.disabled = false; g.value = ""; g.focus();
-  run.left = SECONDS; run.deadline = performance.now() + SECONDS * 1000;
-  clearInterval(run.tick);
-  run.tick = setInterval(() => {
-    const ms = run.deadline - performance.now();
-    $("clock").textContent = Math.max(0, Math.ceil(ms / 1000));
-    $("bar").style.width = Math.max(0, ms / (SECONDS * 10)) + "%";
-    if (ms <= 0) answer(null);
-  }, 100);
-}
-function answer(text) {
-  clearInterval(run.tick);
-  const q = run.set[run.i], g = $("guess"); g.disabled = true;
-  const i = text ? match(q, text) : -1;
-  let html;
-  if (i < 0) {
-    run.picks.push(null);
-    html = `<div class="big" style="color:var(--bad)">${text ? "Not on the list" : "Time's up"}</div>`;
-  } else {
-    const t = tierOf(q, i), [name, pts, col] = TIERS[t];
-    run.points += pts; run.picks.push(t);
-    html = `<div class="big">${q.a[i][0]}</div><span class="tier" style="background:var(${col})">${name} +${pts}</span>`;
-  }
-  const gem = q.a[q.a.length - 1][0];
-  const samples = q.a.filter((_, k) => k !== i).slice(0, 3).map(a => a[0]);
-  html += `<p class="sub">Legendary answer: <b style="color:var(--t4)">${gem}</b><br>Others: ${samples.join(", ")}…</p>`;
-  $("reveal").innerHTML = html;
-  setProgress(run.points);
-  run.i++;
-  const b = $("next"); b.textContent = run.i < ROUNDS ? "Next" : "Finish"; b.classList.remove("hidden"); b.focus();
-}
-// Answers not on the list are rejected and the clock keeps running, so the player can try again.
-$("guess").onkeydown = e => {
-  const g = e.target, v = g.value.trim();
-  if (e.key !== "Enter" || !v || g.disabled) return;
-  if (match(run.set[run.i], v) >= 0) return answer(v);
-  $("reveal").innerHTML = `<div class="big" style="color:var(--bad)">✗ ${v.replace(/[<>&]/g, "")}</div><p class="sub">Not on the list. Try again!</p>`;
-  g.value = ""; g.classList.remove("shake"); void g.offsetWidth; g.classList.add("shake");
-};
-$("next").onclick = () => run.i < ROUNDS ? nextRound() : finish();
+let run = null, screen = "title", timer = null;
+const RING = 2 * Math.PI * 23;
 
+function startRun(kind) {
+  sfx.unlock(); sfx.click();
+  const saved = store.get("kaw.daily", null);
+  if (kind === "daily" && saved?.day === dayKey && saved.done) return showSummary(saved);
+  run = { kind, set: kind === "daily" ? dailySet() : endlessSet(), i: 0, points: 0, results: [] };
+  if (kind === "daily" && saved?.day === dayKey) { run.results = saved.results; run.points = saved.points; run.i = saved.results.length; }
+  heroAlt = run.points * 10; climb = null; lastRegion = Math.min(NS - 1, Math.floor(heroAlt / 1000)); camSpeed = 0.05;
+  show("title", false); show("summary", false); show("hud", true); document.body.classList.remove("on-title");
+  renderHud(); nextPrompt();
+}
+function renderHud() {
+  $("pips").innerHTML = Array.from({ length: ROUNDS }, (_, k) => {
+    const r = run?.results[k];
+    if (r) return `<i style="background:${r.tier < 0 ? "#5a1a26" : TIERS[r.tier].col};border-color:${r.tier < 0 ? "#ff4d5e" : "#fff"}"></i>`;
+    return `<i class="${run && k === run.i && screen === "prompt" ? "now" : ""}"></i>`;
+  }).join("");
+  $("pipLabel").textContent = run ? (run.kind === "daily" ? `DAY #${dayNum}` : "ENDLESS") + ` · ${Math.min(run.i + (screen === "prompt" ? 1 : 0), ROUNDS)}/${ROUNDS}` : "";
+  $("scoreV").textContent = run ? run.points : 0;
+}
+function nextPrompt() {
+  if (run.i >= ROUNDS) return finish();
+  screen = "prompt"; focus = 0.68;
+  const q = run.set[run.i];
+  $("cardK").textContent = `PROMPT ${run.i + 1} OF ${ROUNDS}`;
+  $("cardQ").textContent = q.q;
+  $("cardHint").textContent = `${q.a.length} answers on the list · rarer answers climb higher`;
+  show("reveal", false); show("card", true); show("dock", true); $("err").textContent = "";
+  const g = $("guess"); g.value = ""; g.disabled = false; setTimeout(() => g.focus(), 30);
+  renderHud();
+  const deadline = performance.now() + SECONDS * 1000; let lastSec = SECONDS;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    const ms = deadline - performance.now(), s = Math.max(0, Math.ceil(ms / 1000));
+    $("ringNum").textContent = s;
+    $("ringArc").style.strokeDashoffset = RING * (1 - Math.max(0, ms) / (SECONDS * 1000));
+    $("ring").classList.toggle("danger", s <= 5);
+    if (s !== lastSec) { lastSec = s; if (s <= 5 && s > 0) sfx.tick(); }
+    if (ms <= 0) resolve(-1);
+  }, 50);
+}
+function jolt(el) { el.classList.remove("jolt"); void el.offsetWidth; el.classList.add("jolt"); }
+// answers that aren't on the list are turned away, and the clock keeps running
+function submit() {
+  if (screen !== "prompt") return;
+  const g = $("guess"), v = g.value.trim(); if (!v) return;
+  const i = match(run.set[run.i], v);
+  if (i < 0) { sfx.wrong(); $("err").textContent = `“${v}” isn't on the list. Try again!`; g.value = ""; jolt($("dock")); return; }
+  resolve(i);
+}
+function resolve(i) {
+  if (screen !== "prompt") return;
+  screen = "reveal"; clearInterval(timer);
+  const q = run.set[run.i], { p, N } = popularity(q);
+  const tier = i < 0 ? -1 : tierOf(q, i, p), pts = tier < 0 ? 0 : TIERS[tier].pts;
+  run.results.push({ q: q.q, answer: i < 0 ? null : q.a[i][0], tier, pts });
+  run.points += pts; run.i++;
+  if (run.kind === "daily") store.set("kaw.daily", { day: dayKey, kind: "daily", results: run.results, points: run.points, done: false });
+  sendAnswer(q.q, i);
+  $("guess").disabled = true; $("guess").blur();
+  show("card", false); show("dock", false);
+  renderReveal(q, i, tier, pts, p, N);
+  show("reveal", true); renderHud(); $("reveal").scrollTop = 0;
+  focus = 0.3; $("rvNext").classList.add("hidden");
+  if (tier < 0) { sfx.miss(); setTimeout(showNext, 900); return; }
+  sfx.tier(tier); flash(TIERS[tier].col);
+  if (tier >= 3) { const s = $("stage"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
+  burst(80, feetY(heroAlt) - 10, 10 + tier * 12, [TIERS[tier].col, "#ffffff"], 1 + tier * 0.3);
+  climb = { from: heroAlt, to: Math.min(MAXALT, heroAlt + pts * 10), t0: performance.now(), dur: 600 + pts * 15, tier, done: showNext };
+}
+function showNext() {
+  if (screen !== "reveal") return;
+  const b = $("rvNext"); b.textContent = run.i < ROUNDS ? "NEXT PROMPT ▲" : "SEE YOUR CLIMB ▲";
+  b.classList.remove("hidden"); b.focus({ preventScroll: true });
+}
+function flash(col) { const f = $("flash"); f.style.background = col; f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
+function renderReveal(q, i, tier, pts, p, N) {
+  const col = tier < 0 ? "#ff4d5e" : TIERS[tier].col, tw = $("rvTier");
+  tw.textContent = tier < 0 ? "TIME'S UP" : TIERS[tier].name;
+  tw.style.color = col; tw.style.textShadow = `0 0 18px ${col}99, 3px 3px 0 #0b0818`;
+  tw.className = ""; void tw.offsetWidth; tw.className = tier === 4 ? "legend" : "pop";
+  $("rvAnswer").textContent = tier < 0 ? "No answer this time" : `“${q.a[i][0]}”`;
+  $("rvPts").textContent = tier < 0 ? "+0 PTS · HOLDING ON" : `+${pts} PTS · CLIMB ${(pts * 10).toLocaleString()} M`;
+  $("rvLine").textContent = tier < 0 ? "Here's what other climbers said." : pickLine(TIERS[tier].lines);
+  show("rvMeter", tier >= 0);
+  $("meter").innerHTML = TIERS.map((T, k) => `<div class="${k === tier ? "on" : ""}" style="background:${T.col};color:${T.col}"></div>`).join("") + `<i id="rvMark" style="left:0%"></i>`;
+  if (tier >= 0) requestAnimationFrame(() => requestAnimationFrame(() => $("rvMark").style.left = (meterPos(tier, p[i]) * 100) + "%"));
+  const order = q.a.map((_, k) => k).sort((a, b) => p[b] - p[a]);
+  $("rvStat").innerHTML = tier < 0 ? "" :
+    `<b style="color:${col}">≈${pct(p[i])}</b> of climbers said this · <b>#${order.indexOf(i) + 1}</b> of ${q.a.length} answers` +
+    `<br><small>${N < 25 ? "Early estimate. It gets sharper as more people play." : `Based on ${N.toLocaleString()} climbs`}</small>`;
+  const rows = order.slice(0, 4); if (i >= 0 && !rows.includes(i)) rows.push(i);
+  const top = p[order[0]];
+  $("rvBoard").innerHTML = `<div class="bhead">MOST SAID</div>` + rows.map(k =>
+    `<div class="brow${k === i ? " me" : ""}"><span class="bn">${k === i ? "▶ " : ""}${esc(q.a[k][0])}</span>` +
+    `<span class="bb"><i style="width:${Math.max(4, p[k] / top * 100)}%;background:${TIERS[tierOf(q, k, p)].col}"></i></span><span class="bp">${pct(p[k])}</span></div>`).join("");
+  const gem = q.a[q.a.length - 1][0];
+  $("rvGem").textContent = tier === 4 ? "★ You found this prompt's hidden gem!" : `★ Hidden Legendary answer: ${mask(gem)}`;
+}
+function banner(r) {
+  const b = $("banner");
+  $("bannerT").textContent = `— ${REGIONS[r][0]} —`;
+  $("bannerS").textContent = `${(r * 1000).toLocaleString()} m · ${REGIONS[r][1]}`;
+  b.classList.remove("hidden", "show"); void b.offsetWidth; b.classList.add("show");
+  sfx.region();
+}
+
+function stats() { return store.get("kaw.stats", { played: 0, best: 0, total: 0, streak: 0, maxStreak: 0, last: null, tiers: [0, 0, 0, 0, 0], misses: 0 }); }
 function finish() {
-  const icons = ["⬜", "🟩", "🟦", "🟪", "🟨"];
-  const grid = run.picks.map(p => p === null ? "⬛" : icons[p]).join("");
-  const region = $("where").textContent, m = (run.points * 10).toLocaleString();
-  if (run.mode === "daily") store.set("kawillion.day", { day: dayKey, points: run.points, grid });
-  const best = Math.max(Number(store.get("kawillion.bestpts", 0)) || 0, run.points); store.set("kawillion.bestpts", best);
-  const share = `Kawillion #${dayNum} ${grid}\n${m} m · reached ${region}`;
-  $("play").classList.add("hidden");
-  const d = $("done"); d.classList.remove("hidden");
-  d.innerHTML = `<div class="px" style="font-size:14px">Journey over</div>
-    <p class="big px" style="font-size:20px;color:var(--gold)">${m} m</p>
-    <p>You reached <b>${region}</b>. ${run.points >= MAX ? "A perfect run!" : `Best ever: ${(best * 10).toLocaleString()} m`}</p>
-    <p style="font-size:30px">${grid}</p>
-    <div class="row"><button class="go" id="share">Copy result</button><button id="again">Endless mode</button></div>`;
-  $("share").onclick = () => { navigator.clipboard?.writeText(share); $("share").textContent = "Copied"; };
-  $("again").onclick = () => startRun("endless");
+  const data = { day: dayKey, kind: run.kind, results: run.results, points: run.points, done: true };
+  if (run.kind === "daily") store.set("kaw.daily", data);
+  const s = stats();
+  if (run.kind === "daily") {
+    s.played++; s.total += run.points;
+    s.streak = s.last === yesterKey ? s.streak + 1 : s.last === dayKey ? s.streak : 1;
+    s.maxStreak = Math.max(s.maxStreak, s.streak); s.last = dayKey;
+  }
+  s.best = Math.max(s.best, run.points);
+  for (const r of run.results) r.tier < 0 ? s.misses++ : s.tiers[r.tier]++;
+  store.set("kaw.stats", s);
+  if (run.points >= MAXPTS) { sfx.fanfare(); for (let k = 0; k < 4; k++) setTimeout(() => burst(80, feetY(heroAlt) - 10, 40, TIERS.map(T => T.col), 2), k * 250); }
+  else sfx.done();
+  showSummary(data);
+}
+const gridOf = results => results.map(r => r.tier < 0 ? "⬛" : TIERS[r.tier].emoji).join("");
+const regionAt = alt => REGIONS[Math.min(NS - 1, Math.floor(alt / 1000))][0];
+function showSummary(data) {
+  screen = "summary"; focus = 0.4; clearInterval(timer);
+  if (!run) run = { kind: data.kind, results: data.results, points: data.points, i: ROUNDS };
+  heroAlt = data.points * 10; lastRegion = NS;
+  ["title", "card", "dock", "reveal"].forEach(id => show(id, false)); show("hud", true); renderHud(); document.body.classList.remove("on-title");
+  const alt = data.points * 10;
+  $("smHead").textContent = data.kind === "daily" ? `CLIMB REPORT · DAY #${dayNum}` : "ENDLESS CLIMB REPORT";
+  $("smAlt").textContent = fmtM(alt);
+  $("smWhere").textContent = alt >= MAXALT ? "You reached the summit of Sky Castle!" : `You reached ${regionAt(alt).toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}`;
+  $("smGrid").textContent = gridOf(data.results);
+  $("smRows").innerHTML = data.results.map((r, k) => {
+    const T = r.tier < 0 ? { name: "MISS", col: "#ff4d5e" } : TIERS[r.tier];
+    return `<div class="srow"><span class="mute">${k + 1}</span><span class="st">${esc(r.q.replace(/^Name (a|an) /, ""))}</span><span class="sa">${r.answer ? esc(r.answer) : "—"}</span><span class="chip" style="background:${T.col}">${T.name} +${r.pts}</span></div>`;
+  }).join("");
+  $("smNext").innerHTML = data.kind === "daily" ? `Next daily climb in <span class="nextIn">${untilMidnight()}</span>` : "";
+  $("smShare").textContent = "COPY RESULT";
+  show("summary", true);
+}
+function shareText(data) {
+  return `Kawillion ${data.kind === "daily" ? "#" + dayNum : "(endless)"} ▲ ${fmtM(data.points * 10)}\n${gridOf(data.results)}\nkawillion.rennko.tech`;
 }
 
 function home() {
-  $("dayLabel").textContent = `Day #${dayNum}`;
-  const done = store.get("kawillion.day", null);
-  if (done && done.day === dayKey) {
-    $("homeText").textContent = `Today's journey is done: ${(done.points * 10).toLocaleString()} m ${done.grid}. New prompts tomorrow. Endless mode is always open.`;
-    $("daily").disabled = true; setProgress(done.points, true);
-  } else $("homeText").textContent = `7 prompts, ${SECONDS} seconds each, one answer per prompt.`;
+  screen = "title"; run = null; climb = null; clearInterval(timer); document.body.classList.add("on-title");
+  ["hud", "card", "dock", "reveal", "summary", "banner"].forEach(id => show(id, false)); show("title", true);
+  focus = 0.55; heroAlt = 0; lastRegion = 0;
+  const saved = store.get("kaw.daily", null), s = stats();
+  $("dayLabel").textContent = `DAY #${dayNum}`;
+  $("streak").textContent = s.streak && (s.last === dayKey || s.last === yesterKey) ? `🔥 ${s.streak}-day streak` : "";
+  if (saved?.day === dayKey && saved.done) {
+    $("begin").textContent = "▲ VIEW TODAY'S CLIMB ▲";
+    $("status").innerHTML = `Today: <b style="color:var(--gold)">${fmtM(saved.points * 10)}</b> ${gridOf(saved.results)}<br><small>New prompts in <span class="nextIn">${untilMidnight()}</span></small>`;
+  } else if (saved?.day === dayKey) {
+    $("begin").textContent = "▲ CONTINUE CLIMB ▲";
+    $("status").innerHTML = `<small>Prompt ${saved.results.length + 1} of ${ROUNDS} · ${fmtM(saved.points * 10)} so far</small>`;
+  } else {
+    $("begin").textContent = "▲ BEGIN CLIMB ▲";
+    $("status").innerHTML = `<small>7 prompts · 25 seconds each · one answer per prompt</small>`;
+  }
 }
-$("daily").onclick = () => startRun("daily");
-$("endless").onclick = () => startRun("endless");
+
+function modal(html) { $("modalBody").innerHTML = html + `<div class="row" style="margin-top:14px"><button class="btn go" onclick="closeModal()">GOT IT</button></div>`; show("modal", true); }
+function closeModal() { show("modal", false); if (screen === "prompt") $("guess").focus(); }
+function helpModal() {
+  modal(`<h3>HOW TO PLAY</h3>
+    <p>Every day there are <b>7 anime prompts</b>, the same for everyone. You get <b>25 seconds</b> and <b>one answer</b> for each.</p>
+    <p>If your answer isn't on the list, you can try again while the clock runs. Spelling doesn't have to be perfect, and a unique first or last name is enough.</p>
+    <p>The <b>rarer</b> your answer, the more points you score and the higher you climb. Rarity comes from what other climbers answer.</p>
+    <div style="margin:10px 0">${TIERS.map(T => `<div class="trow"><span style="color:${T.col}">${T.emoji} ${T.name}</span><span>+${T.pts} pts · ${T.pts * 10} m</span></div>`).join("")}</div>
+    <p>Each prompt has one hidden <b style="color:var(--gold)">Legendary</b> answer. A perfect day reaches the Sky Castle at 7,000 m.</p>`);
+}
+function statsModal() {
+  const s = stats(), total = s.tiers.reduce((a, b) => a + b, 0) + s.misses, mx = Math.max(1, ...s.tiers, s.misses);
+  modal(`<h3>YOUR STATS</h3>
+    <div class="stats"><div><b>${s.played}</b><span>climbs</span></div><div><b>${s.played ? fmtM(s.total / s.played * 10).replace(" m", "") : 0}</b><span>avg m</span></div><div><b>${s.streak}</b><span>streak</span></div><div><b>${s.maxStreak}</b><span>best streak</span></div></div>
+    <p class="mute">Best climb: <b style="color:var(--gold)">${fmtM(s.best * 10)}</b> · ${total} answers given</p>
+    ${TIERS.map((T, k) => `<div class="brow"><span style="color:${T.col}">${T.name}</span><span class="bb"><i style="width:${s.tiers[k] / mx * 100}%;background:${T.col}"></i></span><span class="bp">${s.tiers[k]}</span></div>`).join("")}
+    <div class="brow"><span style="color:#ff4d5e">TIME'S UP</span><span class="bb"><i style="width:${s.misses / mx * 100}%;background:#ff4d5e"></i></span><span class="bp">${s.misses}</span></div>`);
+}
+
+$("logo").innerHTML = [..."KAWILLION"].map((c, k) => `<span style="animation-delay:${k * 0.09}s">${c}</span>`).join("");
+$("begin").onclick = () => startRun("daily");
+$("endless").onclick = $("smEndless").onclick = () => startRun("endless");
+$("smHome").onclick = $("homeBtn").onclick = () => { sfx.click(); home(); };
+$("howBtn").onclick = $("helpIcon").onclick = helpModal;
+$("statsBtn").onclick = $("statsIcon").onclick = statsModal;
+$("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+$("soundBtn").onclick = () => { const m = sfx.toggle(); $("soundBtn").textContent = m ? "×" : "♪"; if (!m) sfx.click(); };
+$("soundBtn").textContent = sfx.muted ? "×" : "♪";
+$("climbBtn").onclick = submit;
+$("rvNext").onclick = () => { sfx.click(); nextPrompt(); };
+$("smShare").onclick = () => {
+  const data = store.get("kaw.daily", null)?.done && run?.kind === "daily" ? store.get("kaw.daily", null) : { kind: run.kind, results: run.results, points: run.points };
+  navigator.clipboard?.writeText(shareText(data)).then(() => $("smShare").textContent = "COPIED!", () => {});
+};
+$("guess").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); submit(); } else if (e.key.length === 1) sfx.key(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !$("modal").classList.contains("hidden")) return closeModal();
+  if (e.key !== "Enter" || !$("modal").classList.contains("hidden") || e.target.tagName === "BUTTON") return;
+  if (screen === "reveal" && !$("rvNext").classList.contains("hidden")) $("rvNext").click();
+  else if (screen === "title") $("begin").click();
+});
 home();
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>

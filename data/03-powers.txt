@@ -2,31 +2,36 @@
 @ Powers
 Gum-Gum Fruit | Gomu Gomu; Flame-Flame Fruit | Mera Mera; Smoke-Smoke Fruit | Moku Moku; Sand-Sand Fruit | Suna Suna; Rumble-Rumble Fruit | Goro Goro; Chop-Chop Fruit | Bara Bara; Flower-Flower Fruit | Hana Hana; Human-Human Fruit | Hito Hito; Revive-Revive Fruit | Yomi Yomi; Op-Op Fruit | Ope Ope
 Dark-Dark Fruit | Yami Yami; Tremor-Tremor Fruit | Gura Gura; Magma-Magma Fruit | Magu Magu; Ice-Ice Fruit | Hie Hie; Glint-Glint Fruit | Pika Pika; String-String Fruit | Ito Ito; Love-Love Fruit | Mero Mero; Shadow-Shadow Fruit | Kage Kage; Paw-Paw Fruit | Nikyu Nikyu; Mochi-Mochi Fruit | Mochi Mochi
-Soul-Soul Fruit | Soru Soru; Hollow-Hollow Fruit | Horo Horo; Clear-Clear Fruit | Suke Suke; Spin-Spin Fruit | Bane Bane; Door-Door Fruit | Doa Doa; Barrier-Barrier Fruit | Bari Bari; Hobby-Hobby Fruit | Hobi Hobi; Swirl-Swirl Fruit | Guru Guru; Gas-Gas Fruit | Gasu Gasu; Wax-Wax Fruit | Doru Doru
-Clone-Clone Fruit | Mane Mane; Spike-Spike Fruit | Toge Toge; Bomb-Bomb Fruit | Bomu Bomu; Slip-Slip Fruit | Sube Sube; Fish-Fish Fruit Azure Dragon | Uo Uo; Bird-Bird Fruit Phoenix | Tori Tori; Magnet-Magnet Fruit | Jiki Jiki; Poison-Poison Fruit | Doku Doku; Chilly-Chilly Fruit | Yuki Yuki; Venom-Venom Fruit
+Soul-Soul Fruit | Soru Soru; Hollow-Hollow Fruit | Horo Horo; Clear-Clear Fruit | Suke Suke; Spring-Spring Fruit | Bane Bane; Door-Door Fruit | Doa Doa; Barrier-Barrier Fruit | Bari Bari; Hobby-Hobby Fruit | Hobi Hobi; Spin-Spin Fruit | Guru Guru; Gas-Gas Fruit | Gasu Gasu; Wax-Wax Fruit | Doru Doru
+Clone-Clone Fruit | Mane Mane; Spike-Spike Fruit | Toge Toge; Bomb-Bomb Fruit | Bomu Bomu; Slip-Slip Fruit | Sube Sube; Fish-Fish Fruit Azure Dragon | Uo Uo; Bird-Bird Fruit Phoenix | Tori Tori; Magnet-Magnet Fruit | Jiki Jiki; Venom-Venom Fruit | Doku Doku | Poison-Poison Fruit; Snow-Snow Fruit | Yuki Yuki | Chilly-Chilly Fruit
+* Calm-Calm Fruit | Nagi Nagi
 
 # Name a Naruto jutsu
 @ Powers
 Rasengan; Chidori; Shadow Clone Jutsu | Kage Bunshin; Sexy Jutsu | Oiroke no Jutsu; Fireball Jutsu | Great Fireball; Sharingan; Rinnegan; Byakugan; Amaterasu; Tsukuyomi
 Susanoo; Kamui; Izanagi; Izanami; Rasenshuriken; Sage Mode; Summoning Jutsu | Kuchiyose; Substitution Jutsu | Kawarimi; Transformation Jutsu | Henge; Eight Gates | Eight Inner Gates
 Shadow Possession Jutsu | Kagemane; Mind Transfer Jutsu; Expansion Jutsu; Eight Trigrams Sixty-Four Palms | 64 Palms; Rotation | Kaiten; Sand Coffin; Kirin; Lightning Blade | Raikiri; Flying Thunder God | Hiraishin; Hidden Mist Jutsu
-Water Dragon Jutsu; Edo Tensei | Reanimation Jutsu; Chibaku Tensei; Shinra Tensei | Almighty Push; Infinite Tsukuyomi; Leaf Hurricane; Primary Lotus; Reaper Death Seal; Wood Style | Mokuton; Truth-Seeking Ball
+Water Dragon Jutsu; Edo Tensei | Reanimation Jutsu; Chibaku Tensei; Shinra Tensei | Almighty Push; Infinite Tsukuyomi; Leaf Hurricane; Primary Lotus; Reaper Death Seal; Wood Style | Mokuton
+* Truth-Seeking Ball
 
 # Name a Demon Slayer breathing style
 @ Powers
-Water Breathing | Water; Flame Breathing | Flame; Thunder Breathing; Wind Breathing; Stone Breathing; Sun Breathing | Hinokami Kagura; Moon Breathing; Mist Breathing; Serpent Breathing; Love Breathing
-Insect Breathing; Flower Breathing; Sound Breathing; Beast Breathing; Snow Breathing
+Water Breathing | Water; Flame Breathing | Flame; Thunder Breathing; Wind Breathing; Stone Breathing; Sun Breathing | Hinokami Kagura; Mist Breathing; Serpent Breathing; Love Breathing
+Insect Breathing; Flower Breathing; Sound Breathing; Beast Breathing
+* Moon Breathing
 
 # Name a JoJo Stand
 @ Powers
 Star Platinum; The World | Za Warudo; Magician's Red; Hierophant Green; Silver Chariot; Hermit Purple; The Fool; Crazy Diamond; Killer Queen; The Hand
 Echoes; Heaven's Door; Harvest; Gold Experience; Sticky Fingers; King Crimson; Moody Blues; Sex Pistols; Aerosmith; Purple Haze
 Stone Free; Whitesnake; Made in Heaven; C-Moon; Tusk; D4C | Dirty Deeds Done Dirt Cheap; Soft & Wet | Soft and Wet; Tower of Gray; Dark Blue Moon; Death Thirteen
-Emperor; Hanged Man; Justice; Anubis; Cream; Bad Company; Red Hot Chili Pepper; Love Train; Spice Girl; Metallica
+Emperor; Hanged Man; Justice; Anubis; Cream; Bad Company; Red Hot Chili Pepper; Love Train; Spice Girl
+* Metallica
 
 # Name a My Hero Academia quirk
 @ Powers
 One For All; All For One; Explosion; Half-Cold Half-Hot; Zero Gravity; Engine; Frog; Hardening; Creation; Invisibility
 Earphone Jack; Tape; Dark Shadow; Erasure; Hellflame; Fierce Wings; Permeation; Mega Hand | Gigantification; Decay; Warp Gate
 Overhaul; Cremation | Blueflame; Transform; Navel Laser; Acid; Shock Absorption; Brainwashing; Pop Off; Anivoice; Tail
-Sugar Rush; Copy; Cementation; Air Walk; Blackwhip; Float; Danger Sense; Fa Jin; Gearshift; Smokescreen
+Sugar Rush; Copy; Cementation; Air Walk; Blackwhip; Float; Danger Sense; Fa Jin; Gearshift
+* Smokescreen

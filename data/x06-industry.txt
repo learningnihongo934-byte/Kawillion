@@ -1,0 +1,46 @@
++ Name an anime studio
+Xebec; Satelight; Manglobe; Studio Hibari; Feel; Diomedea; Gonzo; Arms; Zexcs; Seven Arcs
+Actas; Studio Gallop | Gallop; Group TAC; Tezuka Productions; Mushi Production; Shin-Ei Animation; Ajia-do; Ashi Productions; Studio Comet; Sunrise Beyond
+Studio Chizu; Studio Ponoc; Studio Colorido; Yostar Pictures; Studio VOLN; Geno Studio; Graphinica; Studio 3Hz | 3Hz; Studio Kai; Studio Gokumi
+Studio Pine Jam | Pine Jam; Passione; Project No.9; Seven; Millepensee; Asread; C2C; Lay-duce; Signal.MD; Tear Studio
+Studio Blanc; Bibury Animation Studios | Bibury; EMT Squared; Felix Film; Studio Elle; Okuruto Noboru; ENGI; Telecom Animation Film | Telecom; Production Reed; Studio Junio
+Nomad; Hal Film Maker; Studio Fantasia; Bee Train; Production IMS; Studio M2; Imagin; Arvo Animation; Cygames Pictures; Studio Nue
+Artland; Topcraft; Oh! Production; Kitty Films; Toho Animation Studio; Studio Massket; Drive; GoHands; Hoods Entertainment; Yokohama Animation Laboratory
+Encourage Films; Gathering; Children's Playground Entertainment; Ordet; Platinum Vision; Shirogumi; Digital Frontier; Craftar; Studio Animal; DandeLion Animation Studio
+Nexus; Connect; Silver; Wolfsbane; Studio A-Cat; Atelier Pontdarc; Pierrot Plus; Studio Puyukai; Gekkou; Typhoon Graphics
+Studio Live; TNK; AIC; Radix; Studio Matrix; Revoroot
+
++ Name a manga that ran in Weekly Shonen Jump
+Rokudenashi Blues; Dragon Quest: The Adventure of Dai | Dai no Daibouken; Kinnikuman; Captain Tsubasa; Cobra; Cat's Eye; Kimagure Orange Road; Sakigake!! Otokojuku; Stop!! Hibari-kun!; Hell Teacher Nube | Jigoku Sensei Nube
+Video Girl Ai; Bastard!!; Midori no Makibao; Ninku; Jungle King Tar-chan; Hoshin Engi; Black Cat; Mr. FullSwing; Ichigo 100%; To Love-Ru
+Bobobo-bo Bo-bobo; Tegami Bachi; Psyren; Nurarihyon no Mago; Beelzebub; Medaka Box; Sket Dance; Nisekoi; We Never Learn | Bokuben; Mashle
+Witch Watch; Ayashimon; Akane-banashi; Mission: Yozakura Family | Yozakura Family; Blue Box | Ao no Hako; Me & Roboco | Boku to Roboko; Ichi the Witch; Nue's Exorcist; Kill Blue; Act-Age
+Hinomaru Zumou | Hinomaru Sumo; Samurai 8; Ring ni Kakero; Wingman
+
++ Name a famous mangaka
+Kazue Kato; Atsushi Ohkubo; Tsutomu Nihei; Hiroya Oku; Hitoshi Iwaaki; Shotaro Ishinomori; Fujiko A. Fujio; Mitsuteru Yokoyama; Tetsuya Chiba; Ikki Kajiwara
+Masami Kurumada; Tsukasa Hojo; Buronson; Tetsuo Hara; Yoshiyuki Sadamoto; Kaoru Mori; Kiyohiko Azuma; Chica Umino; Hiroaki Samura; Yukito Kishiro
+Masamune Shirow; Ken Akamatsu; Moyoco Anno; Yoshiki Nakamura; Natsuki Takaya; Bisco Hatori; Matsuri Hino; Arina Tanemura; Yuu Watase; Moto Hagio
+Keiko Takemiya; Riyoko Ikeda; Yoshitoshi ABe; Nakaba Suzuki; Yusei Matsui; Yuto Tsukuda; Shun Saeki; Posuka Demizu; Boichi; Akira Amano
+Katsura Hoshino; Hiroyuki Takei; Mitsutoshi Shimabukuro; Kentaro Yabuki; Yoshio Sawai; Tatsuya Endo; Sui Ishida; Muneyuki Kaneshiro; Takao Saito; Kazuo Koike
+Goseki Kojima; Kazuo Umezu | Kazuo Umezz; Shigeru Mizuki; Ken Ishikawa; Takeshi Konomi; Yoichi Takahashi; Hiroshi Shiibashi; Ryuhei Tamura; Hideaki Sorachi; Taiyo Matsumoto
+Shuichi Shigeno; Shinobu Ohtaka; Haruko Ichikawa; Nagabe; Kamome Shirahama; Ryoko Kui; Kanehito Yamada; Tsukasa Abe; Aka Akasaka; Mengo Yokoyari
+Paru Itagaki; Kazuhiro Fujita; Mikio Ikemoto; Kenjiro Hata
+
++ Name an anime director
+Kenji Nakamura; Seiji Mizushima; Tensai Okamura; Takahiro Omori; Ryutaro Nakamura; Yoshitomo Yonetani; Hayato Date; Noriyuki Abe; Kunihiko Yuyama; Osamu Dezaki
+Yasuhiro Takemoto; Tatsuya Ishihara; Hiroko Utsumi; Yasuhiro Irie; Seiji Kishi; Shinji Takamatsu; Takayuki Hirao; Ei Aoki; Masahiro Ando; Tomohiko Ito
+Kou Matsuo; Toshiyuki Kubooka; Atsuko Ishizuka; Shingo Natsume; Masashi Ishihama; Hiroshi Hamasaki; Morio Asaka; Masahiko Murata; Hiroyuki Okiura; Takeshi Koike
+Shoji Kawamori; Ryosuke Takahashi; Yasuhiro Imagawa; Sunghoo Park; Shota Goshozono; Haruo Sotozaki; Kazuto Nakazawa; Shingo Yamashita; Goro Taniguchi; Yutaka Yamamoto
+Kotaro Tamura; Keiichi Sato; Yoshifumi Kondo; Mitsuo Iso; Kitaro Kosaka
+
++ Name a Japanese anime voice actor
+Yoko Hikasa; Kana Asumi; Yukari Tamura; Chiwa Saito; Marina Inoue; Haruka Tomatsu; Ayana Taketatsu; Minori Chihara; Aya Hirano; Yuko Miyamura
+Kotono Mitsuishi; Hikaru Midorikawa; Akira Ishida; Showtaro Morikubo; Toshio Furukawa; Shigeru Chiba; Norio Wakamoto; Unsho Ishizuka; Tessho Genda; Takaya Kuroda
+Daisuke Hirakawa; Kenichi Suzumura; Koki Uchiyama; Yoshimasa Hosoya; Kenji Nojima; Hiro Shimono; Nobunaga Shimazaki; Soma Saito; Kensho Ono; Yusuke Kobayashi
+Takuya Eguchi; Ayumu Murase; Yuichiro Umehara; Junya Enoki; Chiaki Kobayashi; Seiichiro Yamashita; Toshiki Masuda; Katsuyuki Konishi; Sho Hayami; Kazuhiko Inoue
+Hochu Otsuka; Kenyu Horiuchi; Takehito Koyasu; Rikiya Koyama; Shinichiro Miki; Masakazu Morita; Fumiko Orikasa; Noriaki Sugiyama; Wataru Takagi; Minami Takayama
+Rica Matsumoto; Ikue Otani; Ryusei Nakao; Joji Nakata; Ryotaro Okiayu; Tomokazu Seki; Tomoaki Maeno; Daisuke Namikawa; Reina Ueda; Manaka Iwami
+Lynn; Kaede Hondo; Konomi Kohara; Rina Hidaka; Nao Toyama; Yui Ishikawa; Yuu Asakawa; Eri Kitamura; Mamiko Noto; Ami Koshimizu
+Yumi Uchiyama; Mai Nakahara; Sayaka Ohara; Atsuko Tanaka; Megumi Toyoguchi; Rie Tanaka; Houko Kuwashima; Akiko Yajima; Satsuki Yukino; Yuka Iguchi
+Aoi Koga; Miku Ito; Asami Seto; Yurika Kubo; Sumire Uesaka; Ari Ozawa; Shiori Izawa; Tomori Kusunoki; Fairouz Ai; Kaori Ishihara
