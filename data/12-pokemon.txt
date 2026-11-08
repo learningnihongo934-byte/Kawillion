@@ -1,0 +1,31 @@
+# Name a Generation 2 Pokémon
+@ Characters
+Lugia; Ho-Oh; Celebi; Tyranitar; Umbreon; Espeon; Togepi; Pichu; Totodile; Cyndaquil
+Chikorita; Typhlosion; Feraligatr; Meganium; Suicune; Entei; Raikou; Scizor; Steelix; Wobbuffet
+Marill; Ampharos; Mareep; Heracross; Unown; Smeargle; Skarmory; Houndoom; Kingdra; Blissey
+Crobat; Bayleef; Quilava; Croconaw; Sentret; Furret; Hoothoot; Noctowl; Ledyba; Spinarak
+Ariados; Chinchou; Lanturn; Cleffa; Igglybuff; Togetic; Natu; Xatu; Flaaffy; Bellossom
+Azumarill; Sudowoodo; Politoed; Hoppip; Skiploom; Jumpluff; Aipom; Sunkern; Sunflora; Yanma
+Wooper; Quagsire; Murkrow; Slowking; Misdreavus; Girafarig; Pineco; Forretress; Dunsparce; Gligar
+Snubbull; Granbull; Qwilfish; Shuckle; Sneasel; Teddiursa; Ursaring; Slugma; Magcargo; Swinub
+Piloswine; Corsola; Remoraid; Octillery; Delibird; Mantine; Houndour; Phanpy; Donphan; Porygon2
+Stantler; Tyrogue; Hitmontop; Smoochum; Elekid; Magby; Miltank; Larvitar; Pupitar
+* Ledian
+
+# Name a Generation 3 Pokémon
+@ Characters
+Rayquaza; Groudon; Kyogre; Blaziken; Mudkip; Torchic; Treecko; Gardevoir; Sceptile; Swampert
+Salamence; Metagross; Latias; Latios; Absol; Milotic; Flygon; Jirachi; Deoxys; Ralts
+Wailord; Aggron; Sableye; Mawile; Altaria; Zigzagoon; Shedinja; Slaking; Ludicolo; Breloom
+Grovyle; Combusken; Marshtomp; Poochyena; Mightyena; Linoone; Wurmple; Silcoon; Beautifly; Cascoon
+Dustox; Lotad; Lombre; Seedot; Nuzleaf; Shiftry; Taillow; Swellow; Wingull; Pelipper
+Kirlia; Surskit; Masquerain; Shroomish; Slakoth; Vigoroth; Nincada; Ninjask; Whismur; Loudred
+Exploud; Makuhita; Hariyama; Azurill; Nosepass; Skitty; Delcatty; Aron; Lairon; Meditite
+Medicham; Electrike; Manectric; Plusle; Minun; Volbeat; Illumise; Roselia; Gulpin; Swalot
+Carvanha; Sharpedo; Wailmer; Numel; Camerupt; Torkoal; Spoink; Grumpig; Spinda; Trapinch
+Vibrava; Cacnea; Cacturne; Swablu; Zangoose; Seviper; Lunatone; Solrock; Barboach; Whiscash
+Corphish; Crawdaunt; Baltoy; Claydol; Lileep; Cradily; Anorith; Armaldo; Feebas; Castform
+Kecleon; Shuppet; Banette; Duskull; Dusclops; Tropius; Absol; Wynaut; Snorunt; Glalie
+Spheal; Sealeo; Walrein; Clamperl; Huntail; Gorebyss; Relicanth; Luvdisc; Bagon; Shelgon
+Beldum; Metang; Regirock; Regice; Registeel
+* Chimecho

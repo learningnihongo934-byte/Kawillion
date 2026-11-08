@@ -286,10 +286,12 @@ function buildKeys(q) {
     if (!owners.has(w)) owners.set(w, new Set());
     owners.get(w).add(i);
   })));
+  // a shared name that is already some answer's own nickname stays with that answer ("Yuuki" is Yuuki Konno)
+  const spelled = new Set(q.a.flatMap(alts => alts.map(squash)));
   const familyOf = new Map();
   for (const [w, set] of owners) {
     const n = set.size;
-    if (n > 1 && n <= 12 && n <= q.a.length * 0.2 && w.length >= 4 && !GENERIC.has(w) && !/^\d+$/.test(w)) familyOf.set(w, Math.min(...set));
+    if (n > 1 && n <= 12 && n <= q.a.length * 0.25 && w.length >= 4 && !GENERIC.has(w) && !/^\d+$/.test(w) && !spelled.has(squash(w))) familyOf.set(w, Math.min(...set));
   }
   return q.a.map((alts, i) => {
     const keys = new Set(alts.map(squash));
@@ -583,15 +585,29 @@ function frame(t) {
 }
 
 /* ---------- game ---------- */
-let run = null, screen = "title", timer = null;
+let run = null, screen = "title", timer = null, typing = { shown: 0, first: 0 };
 const RING = 2 * Math.PI * 23;
+// Fair play: leaving the tab mid-prompt, pasting, or answering faster than anyone can read and type
+// forfeits that one prompt (0 points), and the climb moves on.
+const FLAG_COL = "#ff8a3d";
+const FLAGS = {
+  tabs: { name: "SWITCHED TABS", line: "You left the game during the prompt, so this one scores 0." },
+  fast: { name: "TOO FAST", line: "That answer arrived faster than anyone can type, so this one scores 0." },
+};
+function saveDaily(pending) {
+  store.set("kaw.daily", { day: dayKey, kind: "daily", results: run.results, points: run.points, done: false, pending });
+}
 
 function startRun(kind) {
   sfx.unlock(); sfx.click();
   const saved = store.get("kaw.daily", null);
   if (kind === "daily" && saved?.day === dayKey && saved.done) return showSummary(saved);
   run = { kind, set: kind === "daily" ? dailySet() : endlessSet(), i: 0, points: 0, results: [] };
-  if (kind === "daily" && saved?.day === dayKey) { run.results = saved.results; run.points = saved.points; run.i = saved.results.length; }
+  if (kind === "daily" && saved?.day === dayKey) {
+    run.results = saved.results; run.points = saved.points; run.i = saved.results.length;
+    // reloading in the middle of a prompt counts as leaving it
+    if (saved.pending === run.i && run.i < ROUNDS) { run.results.push({ q: run.set[run.i].q, answer: null, tier: -2, pts: 0, flag: "tabs" }); run.i++; saveDaily(); }
+  }
   heroAlt = run.points * 10; climb = null; lastRegion = Math.min(NS - 1, Math.floor(heroAlt / 1000)); camSpeed = 0.05;
   show("title", false); show("summary", false); show("hud", true); document.body.classList.remove("on-title");
   renderHud(); nextPrompt();
@@ -599,7 +615,7 @@ function startRun(kind) {
 function renderHud() {
   $("pips").innerHTML = Array.from({ length: ROUNDS }, (_, k) => {
     const r = run?.results[k];
-    if (r) return `<i style="background:${r.tier < 0 ? "#5a1a26" : TIERS[r.tier].col};border-color:${r.tier < 0 ? "#ff4d5e" : "#fff"}"></i>`;
+    if (r) return `<i style="background:${r.tier === -2 ? "#5a2a0a" : r.tier < 0 ? "#5a1a26" : TIERS[r.tier].col};border-color:${r.tier === -2 ? FLAG_COL : r.tier < 0 ? "#ff4d5e" : "#fff"}"></i>`;
     return `<i class="${run && k === run.i && screen === "prompt" ? "now" : ""}"></i>`;
   }).join("");
   $("pipLabel").textContent = run ? (run.kind === "daily" ? `DAY #${dayNum}` : "ENDLESS") + ` · ${Math.min(run.i + (screen === "prompt" ? 1 : 0), ROUNDS)}/${ROUNDS}` : "";
@@ -608,6 +624,8 @@ function renderHud() {
 function nextPrompt() {
   if (run.i >= ROUNDS) return finish();
   screen = "prompt"; focus = 0.68;
+  if (run.kind === "daily") saveDaily(run.i);
+  typing = { shown: performance.now(), first: 0 };
   const q = run.set[run.i];
   $("cardK").textContent = `PROMPT ${run.i + 1} OF ${ROUNDS}`;
   $("cardQ").textContent = q.q;
@@ -633,23 +651,27 @@ function submit() {
   const g = $("guess"), v = g.value.trim(); if (!v) return;
   const i = match(run.set[run.i], v);
   if (i < 0) { sfx.wrong(); $("err").textContent = `“${v}” isn't on the list. Try again!`; g.value = ""; jolt($("dock")); return; }
+  // under a second after the prompt appeared, or over 30 characters a second, is not human typing
+  const t = performance.now(), cps = typing.first ? v.length / Math.max(0.001, (t - typing.first) / 1000) : Infinity;
+  if (t - typing.shown < 1000 || (v.length >= 8 && cps > 30)) return resolve(-1, "fast");
   resolve(i);
 }
-function resolve(i) {
+function flag(kind) { if (screen === "prompt") resolve(-1, kind); }
+function resolve(i, flagKind) {
   if (screen !== "prompt") return;
-  screen = "reveal"; clearInterval(timer);
+  screen = "reveal"; clearInterval(timer); clearTimeout(blurTimer);
   const q = run.set[run.i], { p, N } = popularity(q);
-  const tier = i < 0 ? -1 : tierOf(q, i, p), pts = tier < 0 ? 0 : TIERS[tier].pts;
-  run.results.push({ q: q.q, answer: i < 0 ? null : q.a[i][0], tier, pts });
+  const tier = flagKind ? -2 : i < 0 ? -1 : tierOf(q, i, p), pts = tier < 0 ? 0 : TIERS[tier].pts;
+  run.results.push({ q: q.q, answer: tier >= 0 ? q.a[i][0] : null, tier, pts, ...(flagKind && { flag: flagKind }) });
   run.points += pts; run.i++;
-  if (run.kind === "daily") store.set("kaw.daily", { day: dayKey, kind: "daily", results: run.results, points: run.points, done: false });
-  sendAnswer(q.q, i);
+  if (run.kind === "daily") saveDaily();
+  if (!flagKind) sendAnswer(q.q, i);
   $("guess").disabled = true; $("guess").blur();
   show("card", false); show("dock", false);
-  renderReveal(q, i, tier, pts, p, N);
+  renderReveal(q, i, tier, pts, p, N, flagKind);
   show("reveal", true); renderHud(); $("reveal").scrollTop = 0;
   focus = 0.3; $("rvNext").classList.add("hidden");
-  if (tier < 0) { sfx.miss(); setTimeout(showNext, 900); return; }
+  if (tier < 0) { if (flagKind) { sfx.wrong(); flash(FLAG_COL); } else sfx.miss(); setTimeout(showNext, 900); return; }
   sfx.tier(tier); flash(TIERS[tier].col);
   if (tier >= 3) { const s = $("stage"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
   burst(80, feetY(heroAlt) - 10, 10 + tier * 12, [TIERS[tier].col, "#ffffff"], 1 + tier * 0.3);
@@ -661,14 +683,14 @@ function showNext() {
   b.classList.remove("hidden"); b.focus({ preventScroll: true });
 }
 function flash(col) { const f = $("flash"); f.style.background = col; f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
-function renderReveal(q, i, tier, pts, p, N) {
-  const col = tier < 0 ? "#ff4d5e" : TIERS[tier].col, tw = $("rvTier");
-  tw.textContent = tier < 0 ? "TIME'S UP" : TIERS[tier].name;
+function renderReveal(q, i, tier, pts, p, N, flagKind) {
+  const col = tier === -2 ? FLAG_COL : tier < 0 ? "#ff4d5e" : TIERS[tier].col, tw = $("rvTier");
+  tw.textContent = tier === -2 ? FLAGS[flagKind].name : tier < 0 ? "TIME'S UP" : TIERS[tier].name;
   tw.style.color = col; tw.style.textShadow = `0 0 18px ${col}99, 3px 3px 0 #0b0818`;
   tw.className = ""; void tw.offsetWidth; tw.className = tier === 4 ? "legend" : "pop";
-  $("rvAnswer").textContent = tier < 0 ? "No answer this time" : `“${q.a[i][0]}”`;
-  $("rvPts").textContent = tier < 0 ? "+0 PTS · HOLDING ON" : `+${pts} PTS · CLIMB ${(pts * 10).toLocaleString()} M`;
-  $("rvLine").textContent = tier < 0 ? "Here's what other climbers said." : pickLine(TIERS[tier].lines);
+  $("rvAnswer").textContent = tier === -2 ? "No outside help!" : tier < 0 ? "No answer this time" : `“${q.a[i][0]}”`;
+  $("rvPts").textContent = tier === -2 ? "+0 PTS · PROMPT FORFEITED" : tier < 0 ? "+0 PTS · HOLDING ON" : `+${pts} PTS · CLIMB ${(pts * 10).toLocaleString()} M`;
+  $("rvLine").textContent = tier === -2 ? FLAGS[flagKind].line : tier < 0 ? "Here's what other climbers said." : pickLine(TIERS[tier].lines);
   show("rvMeter", tier >= 0);
   $("meter").innerHTML = TIERS.map((T, k) => `<div class="${k === tier ? "on" : ""}" style="background:${T.col};color:${T.col}"></div>`).join("") + `<i id="rvMark" style="left:0%"></i>`;
   if (tier >= 0) requestAnimationFrame(() => requestAnimationFrame(() => $("rvMark").style.left = (meterPos(tier, p[i]) * 100) + "%"));
@@ -703,13 +725,13 @@ function finish() {
     s.maxStreak = Math.max(s.maxStreak, s.streak); s.last = dayKey;
   }
   s.best = Math.max(s.best, run.points);
-  for (const r of run.results) r.tier < 0 ? s.misses++ : s.tiers[r.tier]++;
+  for (const r of run.results) r.tier === -2 ? s.flags = (s.flags || 0) + 1 : r.tier < 0 ? s.misses++ : s.tiers[r.tier]++;
   store.set("kaw.stats", s);
   if (run.points >= MAXPTS) { sfx.fanfare(); for (let k = 0; k < 4; k++) setTimeout(() => burst(80, feetY(heroAlt) - 10, 40, TIERS.map(T => T.col), 2), k * 250); }
   else sfx.done();
   showSummary(data);
 }
-const gridOf = results => results.map(r => r.tier < 0 ? "⬛" : TIERS[r.tier].emoji).join("");
+const gridOf = results => results.map(r => r.tier === -2 ? "🚫" : r.tier < 0 ? "⬛" : TIERS[r.tier].emoji).join("");
 const regionAt = alt => REGIONS[Math.min(NS - 1, Math.floor(alt / 1000))][0];
 function showSummary(data) {
   screen = "summary"; focus = 0.4; clearInterval(timer);
@@ -722,7 +744,7 @@ function showSummary(data) {
   $("smWhere").textContent = alt >= MAXALT ? "You reached the summit of Sky Castle!" : `You reached ${regionAt(alt).toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}`;
   $("smGrid").textContent = gridOf(data.results);
   $("smRows").innerHTML = data.results.map((r, k) => {
-    const T = r.tier < 0 ? { name: "MISS", col: "#ff4d5e" } : TIERS[r.tier];
+    const T = r.tier === -2 ? { name: FLAGS[r.flag || "tabs"].name, col: FLAG_COL } : r.tier < 0 ? { name: "MISS", col: "#ff4d5e" } : TIERS[r.tier];
     return `<div class="srow"><span class="mute">${k + 1}</span><span class="st">${esc(r.q.replace(/^Name (a|an) /, ""))}</span><span class="sa">${r.answer ? esc(r.answer) : "—"}</span><span class="chip" style="background:${T.col}">${T.name} +${r.pts}</span></div>`;
   }).join("");
   $("smNext").innerHTML = data.kind === "daily" ? `Next daily climb in <span class="nextIn">${untilMidnight()}</span>` : "";
@@ -758,6 +780,7 @@ function helpModal() {
   modal(`<h3>HOW TO PLAY</h3>
     <p>Every day there are <b>7 anime prompts</b>, the same for everyone. You get <b>25 seconds</b> and <b>one answer</b> for each.</p>
     <p>If your answer isn't on the list, you can try again while the clock runs. Spelling doesn't have to be perfect, and a unique first or last name is enough.</p>
+    <p><b style="color:${FLAG_COL}">Fair play:</b> switching tabs or windows, reloading, or pasting during a prompt scores that prompt 0 and moves you on.</p>
     <p>The <b>rarer</b> your answer, the more points you score and the higher you climb. Rarity comes from what other climbers answer.</p>
     <div style="margin:10px 0">${TIERS.map(T => `<div class="trow"><span style="color:${T.col}">${T.emoji} ${T.name}</span><span>+${T.pts} pts · ${T.pts * 10} m</span></div>`).join("")}</div>
     <p>Each prompt has one hidden <b style="color:var(--gold)">Legendary</b> answer. A perfect day reaches the Sky Castle at 7,000 m.</p>`);
@@ -768,7 +791,8 @@ function statsModal() {
     <div class="stats"><div><b>${s.played}</b><span>climbs</span></div><div><b>${s.played ? fmtM(s.total / s.played * 10).replace(" m", "") : 0}</b><span>avg m</span></div><div><b>${s.streak}</b><span>streak</span></div><div><b>${s.maxStreak}</b><span>best streak</span></div></div>
     <p class="mute">Best climb: <b style="color:var(--gold)">${fmtM(s.best * 10)}</b> · ${total} answers given</p>
     ${TIERS.map((T, k) => `<div class="brow"><span style="color:${T.col}">${T.name}</span><span class="bb"><i style="width:${s.tiers[k] / mx * 100}%;background:${T.col}"></i></span><span class="bp">${s.tiers[k]}</span></div>`).join("")}
-    <div class="brow"><span style="color:#ff4d5e">TIME'S UP</span><span class="bb"><i style="width:${s.misses / mx * 100}%;background:#ff4d5e"></i></span><span class="bp">${s.misses}</span></div>`);
+    <div class="brow"><span style="color:#ff4d5e">TIME'S UP</span><span class="bb"><i style="width:${s.misses / mx * 100}%;background:#ff4d5e"></i></span><span class="bp">${s.misses}</span></div>
+    <div class="brow"><span style="color:${FLAG_COL}">FORFEITED</span><span class="bb"><i style="width:${(s.flags || 0) / mx * 100}%;background:${FLAG_COL}"></i></span><span class="bp">${s.flags || 0}</span></div>`);
 }
 
 $("logo").innerHTML = [..."KAWILLION"].map((c, k) => `<span style="animation-delay:${k * 0.09}s">${c}</span>`).join("");
@@ -786,6 +810,16 @@ $("smShare").onclick = () => {
   const data = store.get("kaw.daily", null)?.done && run?.kind === "daily" ? store.get("kaw.daily", null) : { kind: run.kind, results: run.results, points: run.points };
   navigator.clipboard?.writeText(shareText(data)).then(() => $("smShare").textContent = "COPIED!", () => {});
 };
+let blurTimer = null;
+document.addEventListener("visibilitychange", () => { if (document.hidden) flag("tabs"); });
+addEventListener("blur", () => { if (screen === "prompt") blurTimer = setTimeout(() => flag("tabs"), 1000); });
+addEventListener("focus", () => clearTimeout(blurTimer));
+$("guess").addEventListener("paste", e => { e.preventDefault(); flag("fast"); });
+$("guess").addEventListener("drop", e => { e.preventDefault(); flag("fast"); });
+$("guess").addEventListener("input", e => {
+  if (/^insertFrom(Paste|Drop|Yank)/.test(e.inputType || "")) return flag("fast");
+  if (!typing.first) typing.first = performance.now();
+});
 $("guess").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); submit(); } else if (e.key.length === 1) sfx.key(); });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && !$("modal").classList.contains("hidden")) return closeModal();

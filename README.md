@@ -6,9 +6,10 @@ The rarer your answer, the more points you get (Common 10, Uncommon 30, Rare 60,
 
 - **Clear feedback:** after each answer you see its tier, roughly what share of players said it, its rank, and the most common answers. Each prompt also has a hidden Legendary answer, and you get a hint of its first letters.
 - **Real rarity:** every answer is counted (Cloudflare D1), and rarity moves from a starting guess toward what players actually say.
+- **Fair play:** switching tabs or windows, reloading, pasting, or answering faster than anyone can type during a prompt forfeits that prompt (0 points, shown as SWITCHED TABS or TOO FAST) and moves you on.
 - **More:** an endless mode, streaks and stats, a shareable emoji grid, and synthesized chiptune sound.
 
-30 prompts with about 3,600 answers in total. Matching is forgiving: small typos, first or last names alone ("Rengoku", "Eren"), and dropped endings ("Shadow Clone", "Gomu Gomu no Mi") all count.
+60 prompts with about 5,700 answers in total. Matching is forgiving: small typos, first or last names alone ("Rengoku", "Eren"), and dropped endings ("Shadow Clone", "Gomu Gomu no Mi") all count.
 
 ## Files
 
