@@ -8,7 +8,7 @@ The rarer your answer, the more points you get (Common 10, Uncommon 30, Rare 60,
 - **Real rarity:** every answer is counted (Cloudflare D1), and rarity moves from a starting guess toward what players actually say.
 - **More:** an endless mode, streaks and stats, a shareable emoji grid, and synthesized chiptune sound.
 
-30 prompts with about 3,000 answers in total.
+30 prompts with about 3,600 answers in total. Matching is forgiving: small typos, first or last names alone ("Rengoku", "Eren"), and dropped endings ("Shadow Clone", "Gomu Gomu no Mi") all count.
 
 ## Files
 

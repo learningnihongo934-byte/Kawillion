@@ -268,28 +268,49 @@ function lev(a, b, max) {
   }
   return prev[b.length];
 }
-// every spelling, plus any single word of a multi-word name that no other answer shares ("Kakashi")
+// Every spelling, plus single words of multi-word names:
+// - a word no other answer has ("Kakashi") belongs to its answer;
+// - a name a few answers share ("Rengoku", "Eren", "Monkey", "Uchiha") goes to the most famous of them,
+//   which is the earliest on the list, unless it's a generic word like "Fruit", "Devil" or "World".
+const GENERIC = new Set(["fruit", "devil", "breathing", "jutsu", "release", "style", "mode", "model", "gundam", "studio", "studios",
+  "animation", "pictures", "production", "productions", "films", "film", "entertainment", "works", "online", "world", "life", "girls",
+  "girl", "boys", "club", "team", "story", "season", "movie", "demon", "shenron", "sailor", "queen", "king", "prince", "princess",
+  "captain", "another", "with", "from", "your", "this", "that", "into", "over", "when", "what", "just", "only", "like", "more", "most",
+  "very", "next", "time", "days", "high", "school", "anime", "part", "great", "super", "little", "love", "dance", "technique", "fire",
+  "water", "wind", "earth", "lightning"]);
+// "Shadow Clone" for "Shadow Clone Jutsu", "Gomu Gomu no Mi" for "Gomu Gomu", "Gun" for "Gun Devil"
+const stripSuffix = s => s.replace(/ (no )?(jutsu|fruit|mi|breathing|devil|technique)$/, "");
 function buildKeys(q) {
   const owners = new Map();
   q.a.forEach((alts, i) => alts.forEach(s => norm(s).split(" ").forEach(w => {
     if (!owners.has(w)) owners.set(w, new Set());
     owners.get(w).add(i);
   })));
-  return q.a.map(alts => {
+  const familyOf = new Map();
+  for (const [w, set] of owners) {
+    const n = set.size;
+    if (n > 1 && n <= 12 && n <= q.a.length * 0.2 && w.length >= 4 && !GENERIC.has(w) && !/^\d+$/.test(w)) familyOf.set(w, Math.min(...set));
+  }
+  return q.a.map((alts, i) => {
     const keys = new Set(alts.map(squash));
-    alts.forEach(s => { const ws = norm(s).split(" "); if (ws.length > 1) ws.forEach(w => { if (w.length >= 4 && owners.get(w).size === 1) keys.add(squash(w)); }); });
+    alts.forEach(s => { const t = stripSuffix(norm(s)); if (t.length >= 3) keys.add(squash(t)); });
+    alts.forEach(s => {
+      const ws = norm(s).split(" "); if (ws.length < 2) return;
+      ws.forEach(w => { if (w.length >= 4 && owners.get(w).size === 1 && !GENERIC.has(w)) keys.add(squash(w)); });
+    });
     return [...keys];
-  });
+  }).map((keys, i) => { for (const [w, owner] of familyOf) if (owner === i) keys.push(squash(w)); return keys; });
 }
 function match(q, guess) {
   const g = squash(guess); if (!g) return -1;
+  const gs = [...new Set([g, squash(stripSuffix(norm(guess)))])].filter(Boolean);
   const keys = q._keys ||= buildKeys(q);
   let best = -1, bestD = 9;
-  keys.forEach((ks, i) => ks.forEach(k => {
+  keys.forEach((ks, i) => ks.forEach(k => gs.forEach(x => {
     const max = k.length >= 10 ? 2 : k.length >= 5 ? 1 : 0;
-    const d = k === g ? 0 : lev(g, k, max);
+    const d = k === x ? 0 : lev(x, k, max);
     if (d <= max && d < bestD) { bestD = d; best = i; }
-  }));
+  })));
   return best;
 }
 

@@ -16,9 +16,9 @@ Water Dragon Jutsu; Edo Tensei | Reanimation Jutsu; Chibaku Tensei; Shinra Tense
 
 # Name a Demon Slayer breathing style
 @ Powers
-Water Breathing | Water; Flame Breathing | Flame; Thunder Breathing; Wind Breathing; Stone Breathing; Sun Breathing | Hinokami Kagura; Mist Breathing; Serpent Breathing; Love Breathing
-Insect Breathing; Flower Breathing; Sound Breathing; Beast Breathing
-* Moon Breathing
+Water Breathing | Water | Breath of the Water | Water Breath | Breath of Water; Flame Breathing | Flame | Breath of the Flame | Flame Breath | Breath of Flame | Fire Breathing; Thunder Breathing | Thunder | Breath of the Thunder | Thunder Breath | Breath of Thunder | Lightning Breathing; Sun Breathing | Sun | Breath of the Sun | Sun Breath | Breath of Sun | Hinokami Kagura | Dance of the Fire God | Sun Halo Dragon; Beast Breathing | Beast | Breath of the Beast | Beast Breath | Breath of Beast; Insect Breathing | Insect | Breath of the Insect | Insect Breath | Breath of Insect; Wind Breathing | Wind | Breath of the Wind | Wind Breath | Breath of Wind
+Stone Breathing | Stone | Breath of the Stone | Stone Breath | Breath of Stone | Rock Breathing; Mist Breathing | Mist | Breath of the Mist | Mist Breath | Breath of Mist; Serpent Breathing | Serpent | Breath of the Serpent | Serpent Breath | Breath of Serpent | Snake Breathing; Love Breathing | Love | Breath of the Love | Love Breath | Breath of Love; Sound Breathing | Sound | Breath of the Sound | Sound Breath | Breath of Sound; Flower Breathing | Flower | Breath of the Flower | Flower Breath | Breath of Flower
+* Moon Breathing | Moon | Breath of the Moon | Moon Breath | Breath of Moon
 
 # Name a JoJo Stand
 @ Powers

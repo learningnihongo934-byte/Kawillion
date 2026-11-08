@@ -17,4 +17,7 @@ for q in Q:
             if k in seen and seen[k] != i:
                 print(f"{q['q']}: '{a}' (#{i}) clashes with '{q['a'][seen[k]][0]}' (#{seen[k]})"); bad += 1
             seen.setdefault(k, i)
+    for alts in q["a"]:
+        if alts[0].rstrip().endswith("?") and not any(t in alts[0] for t in ("Kidding Me", "Do You Remember Love")):
+            print(f"{q['q']}: unfinished entry '{alts[0]}'"); bad += 1
 print(f"{bad} clashes")
